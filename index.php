@@ -8,4 +8,6 @@ echo 'hello word22';
     return 'test';
 }
 
-
+function test2(){
+ return 'xxx';
+}
