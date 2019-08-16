@@ -1,5 +1,11 @@
 <?php
 echo 'hello word22';
-echo 'fuck the code';
-echo 'fuck the code22';
+echo 'hello word2233';
+echo 'hello word22';
+echo 'hello word22';
+
+ function test(){
+    return 'test';
+}
+
 
