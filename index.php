@@ -13,4 +13,6 @@ function test3(){
      return 'sss';
 }
 
-
+function test2(){
+ return 'xxx';
+}
