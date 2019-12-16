@@ -1,19 +1,17 @@
 <?php
-echo 'hello word22';
-echo 'hello word2233';
-echo 'hello word22';
-echo 'hello word22';
 
- function test(){
-    return 'test';
 
-}
+class Test{
 
-function test3(){
+    public function test(){
 
-     return 'sss';
-}
+    }
 
-function test2(){
- return 'x222222xx';
+    public function  main(){
+
+    }
+
+    public function love(){
+
+    }
 }
