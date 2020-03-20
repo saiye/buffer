@@ -1,19 +1,6 @@
 <?php
-echo 'hello word22';
-echo 'hello word2233';
-echo 'hello word22';
-echo 'hello word22';
 
- function test(){
-    return 'test';
+include_once   'boostrap.php';
 
-}
+(new App())->run();
 
-function test3(){
-
-     return 'sss';
-}
-
-function test2(){
- return 'x222222xx';
-}
