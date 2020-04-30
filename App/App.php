@@ -17,14 +17,12 @@ class App
             }
         },true,true);*/
         //Receive command line arguments
-
         $arg = getopt('c:');
         if (isset($arg['c'])) {
-                $class = '\\App\\' . str_replace('/', '\\', $arg['c']);
+                $class = 'App' .str_replace('/','\\',$arg['c']);
                 (new  $class())->run();
         } else {
             die('Please enter parameters! For example run:    php index.php   -c Process/Test' . PHP_EOL);
         }
-
     }
 }

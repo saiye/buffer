@@ -12,7 +12,9 @@ class Test extends  Base{
     public function run()
     {
 
-      for ($n = 1; $n <= 10; $n++) {
+        $num=1000;
+
+      for ($n = 1; $n <= $num; $n++) {
             $process = new Process(function () use ($n) {
                 echo 'Child #' . getmypid() . " start and sleep {$n}s" . PHP_EOL;
                 sleep($n);
@@ -22,7 +24,7 @@ class Test extends  Base{
         }
         dd('child id is -'.$process->pid);
 
-        for ($n = 10; $n--;) {
+        for ($n = $num; $n--;) {
             $status = Process::wait(true);
             echo "Recycled #{$status['pid']}, code={$status['code']}, signal={$status['signal']}" . PHP_EOL;
         }
