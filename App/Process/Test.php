@@ -30,4 +30,49 @@ class Test extends  Base{
         }
         echo 'Parent #' . getmypid() . ' exit' . PHP_EOL;
     }
+    
+     /**
+     * curl 请求
+     * @param  string  $method  //POST GET PUT DELETE
+     * @param  string  $url
+     * @param  array  $data
+     * data  [
+     * 'headers' => [
+     * 'Accept' => 'application/json',
+     * ],
+     * 'verify'  => false,
+     * 'params'    => $data
+     *  or
+     * 'json'    => $data
+     * ]
+     * @return bool|string
+     */
+    public static function request(string $method, string $url, array $data)
+    {
+        $params      = $data['params'] ?? $data;
+        $verify      = $data['verify'] ?? false;
+        $timeout     = $data['timeout'] ?? 1;
+        $headerRes   = $data['headers'] ?? [
+                "Content-type" => "application/json", "Accept" => "application/json"
+            ];
+        $headerArray = [];
+        foreach ($headerRes as $k => $v) {
+            $headerArray[] = $k.':'.$v;
+        }
+        if ($method == "GET") {
+            $url = $url.'?'.http_build_query($params);
+        }
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $verify);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, $verify);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headerArray);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $output = curl_exec($curl);
+        curl_close($curl);
+        return $output;
+    }
 }
