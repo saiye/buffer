@@ -10,7 +10,7 @@ interface LogMaster
 {
     /**
      * setting log config
-     * @param  array  $config
+     * @param  Write  $write
      * @return mixed
      */
     public function config(Write $write);
