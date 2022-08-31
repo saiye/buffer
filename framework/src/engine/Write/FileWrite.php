@@ -40,10 +40,10 @@ class FileWrite implements ContractsWrite
     /**
      * 写入消息
      * @param  string  $message
-     * @param  string  $type
+     * @param  int  $type
      * @return void
      */
-    public function write(string $message, string $type)
+    public function write(string $message, int $type)
     {
         $this->message = $message;
         //每天一个log

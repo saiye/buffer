@@ -38,4 +38,12 @@ interface LogMaster
      * @return mixed
      */
     public function debug(string $message, array $params = []);
+
+    /**
+     * warning level message
+     * @param  string  $message
+     * @param  array  $params
+     * @return mixed
+     */
+    public function warning(string $message, array $params = []);
 }

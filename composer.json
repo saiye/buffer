@@ -18,7 +18,7 @@
   "autoload": {
     "psr-4": {
       "Engine\\": "./framework/src/engine",
-      "EngineTest\\": "./framework/tests"
+      "Tests\\": "./tests"
     }
   }
 }

@@ -11,28 +11,28 @@ interface App
      * @param  \Closure|string|null  $concrete
      * @return void
      */
-    public function singleton($abstract, $concrete = null);
+    public function singleton(string $abstract, $concrete = null);
 
 
     /**
      * Register an existing instance as shared in the container.
      *
      * @param  string  $abstract
-     * @param  mixed  $instance
+     * @param  \Closure|string|null  $instance
      * @return mixed
      */
-    public function instance($abstract, $instance);
+    public function instance(string $abstract, \stdClass $instance);
 
 
     /**
      * Resolve the given type from the container.
      *
      * @param  string  $abstract
-     * @param  array  $parameters
+     * @param  \Closure|string|null  $parameters
      * @return mixed
      *
      * @throws \Engine\Contracts\Container\BindingResolutionException
      */
-    public function make($abstract, array $parameters = []);
+    public function make($abstract, $parameters = null);
 
 }

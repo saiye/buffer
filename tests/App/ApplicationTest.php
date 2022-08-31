@@ -1,12 +1,12 @@
 <?php
 
-namespace EngineTest\App;
+namespace Tests\App;
 
 use Engine\Log\LogManage;
 use Engine\Write\ArrayWrite;
 use Engine\Write\FileWrite;
 use Engine\App\Application;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ApplicationTest extends TestCase
 {

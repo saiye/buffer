@@ -2,15 +2,15 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">./framework</directory>
+            <directory suffix=".php">framework</directory>
         </include>
     </coverage>
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./framework/tests/Unit</directory>
+            <directory suffix="Test.php">framework/tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
-            <directory suffix="Test.php">./framework/tests/Feature</directory>
+            <directory suffix="Test.php">framework/tests/Feature</directory>
         </testsuite>
     </testsuites>
     <php>

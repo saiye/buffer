@@ -10,6 +10,10 @@ use Engine\Contracts\Write\Write;
 
 class LogManage implements LogMaster
 {
+    const Log_Error   = 1;
+    const Log_Warning = 2;
+    const Log_Info    = 3;
+    const Log_Debug   = 4;
 
     private Write $write;
 
@@ -23,7 +27,7 @@ class LogManage implements LogMaster
         $this->write->write(json_encode([
             "message" => $message,
             "params"  => $params
-        ]), "info");
+        ]), self::Log_Info);
     }
 
     public function error(string $message, array $params = [])
@@ -31,7 +35,7 @@ class LogManage implements LogMaster
         $this->write->write(json_encode([
             "message" => $message,
             "params"  => $params
-        ]), "error");
+        ]), self::Log_Error);
     }
 
     public function debug(string $message, array $params = [])
@@ -39,6 +43,14 @@ class LogManage implements LogMaster
         $this->write->write(json_encode([
             "message" => $message,
             "params"  => $params
-        ]), "debug");
+        ]), self::Log_Debug);
+    }
+
+    public function warning(string $message, array $params = [])
+    {
+        $this->write->write(json_encode([
+            "message" => $message,
+            "params"  => $params
+        ]), self::Log_Warning);
     }
 }
