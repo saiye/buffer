@@ -17,6 +17,11 @@ class LogManage implements LogMaster
 
     private Write $write;
 
+    public function __construct(Write $write)
+    {
+        $this->config($write);
+    }
+
     public function config(Write $write)
     {
         $this->write = $write;

@@ -37,6 +37,9 @@ class Application implements App
                 "type"     => self::Type_Single,
                 "concrete" => $concrete
             ];
+            if (is_object($concrete)){
+                self::$singleton[$abstract]=$concrete;
+            }
         } else {
             throw  new RegObjException("重复注册类:".$abstract);
         }
@@ -71,7 +74,7 @@ class Application implements App
      */
     public function make($abstract, $parameters = null)
     {
-        $obj = $this->instance[$abstract] ?? null;
+        $obj = self::$singleton[$abstract]??$this->instance[$abstract] ?? null;
         if ($obj) {
             return $obj;
         }

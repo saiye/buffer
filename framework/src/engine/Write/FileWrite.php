@@ -20,10 +20,14 @@ class FileWrite implements ContractsWrite
     private string $baseDir;
 
 
-    public function __construct(string $baseDir)
+    /**
+     * @param  string  $baseDir
+     * @throws \Exception
+     */
+    public function __construct(string $baseDir = "")
     {
         if (empty($baseDir)) {
-            $baseDir = "";
+            throw  new \Exception("cant find log path");
         }
         $this->baseDir = $baseDir;
     }
@@ -49,7 +53,8 @@ class FileWrite implements ContractsWrite
         //每天一个log
         $file = $this->getFileName();
         //追加消息
-        file_put_contents($file, $message, FILE_APPEND);
+        file_put_contents($file, $message.PHP_EOL, FILE_APPEND);
+
     }
 
     /**
