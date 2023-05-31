@@ -2,6 +2,6 @@
 .settings
 .project
 .htaccess
-machinet.conf
 .env
+.phpunit.result.cache
 /vendor/
