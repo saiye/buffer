@@ -60,8 +60,6 @@ class Application implements App
                 "type"     => self::Type_Instance,
                 "concrete" => $instance
             ];
-        } else {
-            throw  new RegObjException("重复注册类:".$abstract);
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\App;
+namespace App;
 
 use Engine\Log\LogManage;
 use Engine\Write\ArrayWrite;
