@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Server;
+namespace App\Server;
 
 use App\Server\Contract\HttpServerContract;
 use App\Server\Contract\Request as ContractRequest;
@@ -62,7 +62,6 @@ class HttpSwooleServer implements HttpServerContract
     public function start(): void
     {
         $server = new \Swoole\WebSocket\Server($this->host, $this->port, $this->mode, $this->sockType);
-
 
         $server->set($this->options);
 

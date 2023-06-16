@@ -4,5 +4,5 @@ namespace App\Server\Contract;
 
 interface Config
 {
-    public function get(string $command):mixed;
+    public function get(string $command,$default=null);
 }

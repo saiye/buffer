@@ -10,16 +10,33 @@ use ReflectionParameter;
 
 class AppContainer
 {
-    protected array $bindings = [];
-    protected array $instances = [];
+    protected $bindings = [];
+    protected $instances = [];
+    protected $path = [];
+
+
+    public function getPath(string $abstract): string
+    {
+        return $path[$abstract] ?? '';
+    }
+
+    public function setPath(string $abstract, string $path): bool
+    {
+        if (is_file($path) || is_dir($path)) {
+            $this->path[$abstract] = $path;
+            return true;
+        }
+        return false;
+    }
 
     /**
-     * @param mixed $abstract
-     * @param mixed|null $concrete
+     *  绑定类
+     * @param  $abstract
+     * @param null $concrete
      * @param bool $shared
      * @return void
      */
-    public function bind(mixed $abstract, mixed $concrete = null, bool $shared = false): void
+    public function bind($abstract, $concrete = null, bool $shared = false): void
     {
         if (is_null($concrete)) {
             $concrete = $abstract;
@@ -38,11 +55,12 @@ class AppContainer
     }
 
     /**
-     * @param mixed $abstract
-     * @param mixed|null $concrete
+     * 绑定单例类
+     * @param  $abstract
+     * @param null $concrete
      * @return void
      */
-    public function singleton(mixed $abstract, mixed $concrete = null): void
+    public function singleton($abstract, $concrete = null): void
     {
         $this->bind($abstract, $concrete, true);
     }
@@ -50,7 +68,7 @@ class AppContainer
     /**
      * @throws ReflectionException
      */
-    public function make($abstract, $parameters = []): mixed
+    public function make($abstract, $parameters = [])
     {
         if (isset($this->instances[$abstract])) {
             return $this->instances[$abstract];
@@ -82,13 +100,13 @@ class AppContainer
 
 
     /**
-     * @param mixed $concrete
+     * 构建类实例
+     * @param $concrete
      * @param array $parameters
-     * @return mixed
+     * @return mixed|object|null
      * @throws ReflectionException
-     * @throws Exception
      */
-    public function build(mixed $concrete, array $parameters = []): mixed
+    private function build($concrete, array $parameters = [])
     {
         if ($concrete instanceof Closure) {
             return $concrete($this, ...$parameters);
@@ -98,13 +116,16 @@ class AppContainer
 
         if (!$reflector->isInstantiable()) throw new Exception("Class $concrete is not instantiable");
 
+        //获取构造函数
         $constructor = $reflector->getConstructor();
 
         if (is_null($constructor)) {
             return new $concrete;
         }
 
+        //获取构造函数的参数依赖
         $dependencies = $constructor->getParameters();
+        //参数依赖匹配
         $parameters = $this->keyParametersByArgument(
             $dependencies,
             $parameters
@@ -119,6 +140,7 @@ class AppContainer
     }
 
     /**
+     * 获取依赖
      * @throws Exception
      */
     protected function getDependencies(array $parameters, array $primitives = []): array
@@ -141,11 +163,11 @@ class AppContainer
     }
 
     /**
+     * 获取默认参数值
      * @param ReflectionParameter $parameter
-     * @return mixed
      * @throws Exception
      */
-    protected function resolveNonClass(ReflectionParameter $parameter): mixed
+    protected function resolveNonClass(ReflectionParameter $parameter)
     {
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
@@ -156,6 +178,7 @@ class AppContainer
 
 
     /**
+     * 参数格式化
      * @param array $dependencies
      * @param array $parameters
      * @return array

@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Server;
+
 use App\Server\Contract\EnvContract;
 
-class Env implements  EnvContract
+class Env implements EnvContract
 {
 
     private array $data;
@@ -13,7 +14,7 @@ class Env implements  EnvContract
         $this->data = $this->loadEnvData($path);
     }
 
-    public function env(string $key, string $default = ''): mixed
+    public function env(string $key, string $default = '')
     {
         $keyRes = explode('.', $key);
         $currData = $default;
@@ -30,13 +31,7 @@ class Env implements  EnvContract
     {
         $data = [];
         if (is_file($path)) {
-            $str = file_get_contents($path);
-            foreach (explode('\n', $str) as $lin) {
-                $res = explode('=', $lin);
-                if (count($res) == 2) {
-                    $data[trim($res[0])] = trim($res[1]);
-                }
-            }
+            $data = parse_ini_file($path);
         }
         return $data;
     }

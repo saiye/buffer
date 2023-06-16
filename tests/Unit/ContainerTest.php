@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 use App\Server\AppContainer;
 use App\Server\Env;
-use PHPUnit\Framework\TestCase;
-class ContainerTest extends TestCase
+use Tests\TestBase;
+class ContainerTest extends TestBase
 {
     public function getEnvPath(): string
     {
@@ -19,9 +19,13 @@ class ContainerTest extends TestCase
         // 创建容器实例
         $container = new AppContainer();
 
-        $container->singleton('App\Server\Contract\EnvContract',Env::class);
+        $container->singleton('Env', function ($app) {
+            return new Env($this->getEnvPath());
+        });
 
-        $name = $container->make("App\Server\Env", [$this->getEnvPath()])->env('APP_NAME');
+        $env = $container->make("Env");
+
+        $name = $env->env('APP_NAME');
 
         $this->assertTrue($name == 'test');
     }
