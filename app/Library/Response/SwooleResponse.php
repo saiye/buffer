@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Server\Response;
+namespace App\Library\Response;
 
-use App\Server\Contract\Response as Base;
+use App\Library\Contract\Response as Base;
 use Swoole\Http\Response;
 
 class SwooleResponse implements Base

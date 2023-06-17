@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Server\Log;
+namespace App\Library\Log;
 
-use App\Server\Contract\Logger;
+use App\Library\Contract\Logger;
 
 class Log implements Logger
 {

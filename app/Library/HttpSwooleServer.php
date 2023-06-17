@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Server;
+namespace App\Library;
 
-use App\Server\Contract\HttpServerContract;
-use App\Server\Contract\Request as ContractRequest;
-use App\Server\Contract\Response as ContractResponse;
-use App\Server\Request\SwooleRequest;
-use App\Server\Response\SwooleResponse;
+use App\Library\Contract\HttpServerContract;
+use App\Library\Contract\Request as ContractRequest;
+use App\Library\Contract\Response as ContractResponse;
+use App\Library\Request\SwooleRequest;
+use App\Library\Response\SwooleResponse;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 

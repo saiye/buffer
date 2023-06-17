@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Server\Config;
+namespace App\Library\Config;
 
-use App\Server\AppContainer;
-use App\Server\Contract\Config as ConfigBase;
+use App\Library\Container;
+use App\Library\Contract\Config as ConfigBase;
 
 class Config implements ConfigBase
 {
     private $app;
 
-    private $data = [];
+    private static $data = [];
 
-    public function __construct(AppContainer $app)
+    public function __construct(Container $app)
     {
         $this->app = $app;
     }
@@ -22,7 +22,7 @@ class Config implements ConfigBase
         if ($pot === false) {
             return $this->getData($command, '', $default);
         } else {
-            return $this->getData(substr($command, 0, $pot), substr($command, $pot), $default);
+            return $this->getData(substr($command, 0, $pot), substr($command, $pot + 1), $default);
         }
     }
 
@@ -33,16 +33,18 @@ class Config implements ConfigBase
 
     private function getData(string $fileName, string $command, $default = null)
     {
-        if (isset($this->data[$fileName])) {
+        if (isset(self::$data[$fileName])) {
             return $this->env($fileName, $command, $default);
         }
-        $file = $this->app->getPath('config.optimize.file');
+        $file = $this->app->getPath('path.config.optimize');
         if (is_file($file)) {
-            $this->data = require_once $file;
+            self::$data = require_once $file;
         } else {
-            $file = $this->app->getPath('config') . DIRECTORY_SEPARATOR . $fileName . '.php';
+            $file = $this->app->getPath('path.config') . DIRECTORY_SEPARATOR . $fileName . '.php';
             if (is_file($file)) {
-                $this->data[$fileName] = require_once $file;
+                self::$data[$fileName] = require_once $file;
+            } else {
+                throw  new \Exception($file . " not find");
             }
         }
         return $this->env($fileName, $command, $default);
@@ -53,7 +55,7 @@ class Config implements ConfigBase
         $keyRes = explode('.', $key);
         $currData = $default;
         foreach ($keyRes as $v) {
-            $currData = $this->data[$fileName][$v] ?? null;
+            $currData = self::$data[$fileName][$v] ?? null;
             if (!is_array($currData)) {
                 break;
             }

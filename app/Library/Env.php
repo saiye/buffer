@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Server;
+namespace App\Library;
 
-use App\Server\Contract\EnvContract;
+use App\Library\Contract\EnvContract;
 
 class Env implements EnvContract
 {
+    private $data;
 
-    private array $data;
-
-    public function __construct(string $path)
+    public function __construct($path)
     {
         $this->data = $this->loadEnvData($path);
     }
 
-    public function env(string $key, string $default = '')
+    public function env(string $key, $default = '')
     {
         $keyRes = explode('.', $key);
         $currData = $default;
         foreach ($keyRes as $v) {
-            $currData = $this->data[$v] ?? null;
+            $currData = $this->data[$v] ?? $default;
             if (!is_array($currData)) {
                 break;
             }

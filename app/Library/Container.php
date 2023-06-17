@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Server;
+namespace App\Library;
 
 use Closure;
 use Exception;
@@ -8,26 +8,10 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
 
-class AppContainer
+class Container
 {
     protected $bindings = [];
     protected $instances = [];
-    protected $path = [];
-
-
-    public function getPath(string $abstract): string
-    {
-        return $path[$abstract] ?? '';
-    }
-
-    public function setPath(string $abstract, string $path): bool
-    {
-        if (is_file($path) || is_dir($path)) {
-            $this->path[$abstract] = $path;
-            return true;
-        }
-        return false;
-    }
 
     /**
      *  绑定类
@@ -45,7 +29,7 @@ class AppContainer
         if (!$concrete instanceof Closure) {
             $concrete = function ($container) use ($concrete) {
                 /**
-                 * @var $container  AppContainer
+                 * @var $container  Container
                  */
                 return $container->build($concrete);
             };

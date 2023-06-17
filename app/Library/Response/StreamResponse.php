@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Server\Response;
+namespace App\Library\Response;
 
 
-use App\Server\Contract\Response;
+use App\Library\Contract\Response;
 
 class StreamResponse implements Response
 {
     private $client;
+
     public function __construct($client)
     {
         $this->client = $client;
     }
+
     public function setHeader(string $name, string $value): void
     {
         fwrite($this->client, "$name: $value\r\n");
@@ -29,7 +31,7 @@ class StreamResponse implements Response
 
     public function end(): void
     {
-        fwrite($this->client, "\r\n");
+        fwrite($this->client,   "\r\n");
     }
 
 }

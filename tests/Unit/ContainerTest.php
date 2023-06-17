@@ -1,32 +1,35 @@
 <?php
 
 namespace Tests\Unit;
-use App\Server\AppContainer;
-use App\Server\Env;
+
+use App\Library\Config\Config;
+use App\Library\Env;
 use Tests\TestBase;
+
 class ContainerTest extends TestBase
 {
-    public function getEnvPath(): string
-    {
-        return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env';
-    }
-
     /**
      * @throws \ReflectionException
      */
-    public function testBindEnv()
+    public function testEnv()
     {
         // 创建容器实例
-        $container = new AppContainer();
+        $env = $this->app->make(Env::class);
 
-        $container->singleton('Env', function ($app) {
-            return new Env($this->getEnvPath());
-        });
+        $config = $this->app->make(Config::class);
 
-        $env = $container->make("Env");
+        $providers = $config->get('app.providers');
 
-        $name = $env->env('APP_NAME');
+        $this->assertTrue($env->env('APP_NAME') == $config->get('app.name') && is_array($providers));
+    }
 
-        $this->assertTrue($name == 'test');
+    public function testEnvDefault()
+    {
+        // 创建容器实例
+        $env = $this->app->make(Env::class);
+
+        $port = $env->env('SERVER_PORT_N', 9505);
+
+        $this->assertTrue($port == 9505);
     }
 }

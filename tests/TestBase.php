@@ -3,7 +3,7 @@
 namespace Tests;
 
 
-use App\Server\AppContainer;
+use App\Library\Application;
 use PHPUnit\Framework\TestCase;
 
 class TestBase extends TestCase
@@ -12,10 +12,13 @@ class TestBase extends TestCase
 
     protected function setUp(): void
     {
-        $this->app = $this->createApplication();
+        if ($this->app==null) {
+            $this->app = $this->createApplication();
+        }
     }
-    private function createApplication(): AppContainer
+
+    private function createApplication(): Application
     {
-        return require __DIR__ . '/../bootstrap/app.php';
+        return require_once __DIR__ . '/../bootstrap/app.php';
     }
 }

@@ -1,6 +1,8 @@
 <?php
-namespace App\Server\Request;
-use App\Server\Contract\Request as base;
+
+namespace App\Library\Request;
+
+use App\Library\Contract\Request as base;
 use Swoole\Http\Request;
 
 class SwooleRequest implements base
@@ -40,6 +42,11 @@ class SwooleRequest implements base
     public function __call($name, $arguments)
     {
         return $this->request->$name(...$arguments);
+    }
+
+    public function isWebSocketUpgrade(): bool
+    {
+        return false;
     }
 
 }

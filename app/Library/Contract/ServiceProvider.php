@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Server\Contract;
+namespace App\Library\Contract;
 
-use App\Server\AppContainer;
+use App\Library\Application;
+use App\Library\Container;
 
 abstract class  ServiceProvider
 {
     /**
-     * @var AppContainer
+     * @var Container
      */
     protected $app;
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Server\Contract;
+namespace App\Library\Contract;
 
 interface Logger
 {
