@@ -164,7 +164,7 @@ class HttpServer implements HttpServerContract
             'httpVersion' => $httpVersion,
             'uri' => $path,
             'headers' => $headers,
-            'body' => $requestData,
+            'body' => json_encode($requestData),
         ];
         return new StreamRequest($data);
     }
