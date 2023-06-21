@@ -3,6 +3,6 @@
 define('APP_START', microtime(true));
 require __DIR__ . '/vendor/autoload.php';
 $app = require_once __DIR__ . '/bootstrap/app.php';
-$console = $app->make(App\Library\HttpServer::class);
+$console = $app->make(App\Library\HttpSwooleServer::class);
 $console->start();
 

@@ -1,10 +1,12 @@
 <?php
-
-use App\Library\Application;
-
+use App\Library\Env;
 function env(string $key, string $default)
 {
-    return Application::getApplication()->make('App\Library\Env')->env($key, $default);
+    static $env;
+    if (!$env){
+        $env=new Env(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'.env');
+    }
+    return $env->env($key, $default);
 }
 
 function storage_path(string $path): string

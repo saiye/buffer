@@ -8,4 +8,5 @@ interface Logger
 
     public function error(string $data): void;
     public function info(string $data): void;
+    public function write(): bool;
 }

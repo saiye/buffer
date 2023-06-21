@@ -2,8 +2,9 @@
 
 namespace App\Library;
 
-use App\Library\Provider\InitServerProvider;
+use App\Library\Config\Config;
 use App\Library\Provider\HttpServerProvider;
+use App\Library\Provider\InitServerProvider;
 
 class Application extends Container
 {
@@ -20,11 +21,19 @@ class Application extends Container
         (new HttpServerProvider($this))->register();
 
         //应用提供者注册
+        $config = $this->make(Config::class);
+
+        $providers = $config->get('app.providers');
+        if (is_array($providers)){
+            foreach ($providers as $provider) {
+                (new $provider($this))->register();
+            }
+        }
     }
 
-    public static function getApplication():Application
+    public static function getApplication(): Application
     {
-        if (self::$app==null) {
+        if (self::$app == null) {
             self::$app = new self();
         }
         return self::$app;

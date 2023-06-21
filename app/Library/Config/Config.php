@@ -42,7 +42,7 @@ class Config implements ConfigBase
         } else {
             $file = $this->app->getPath('path.config') . DIRECTORY_SEPARATOR . $fileName . '.php';
             if (is_file($file)) {
-                self::$data[$fileName] = require_once $file;
+                self::$data[$fileName] = require $file;
             } else {
                 throw  new \Exception($file . " not find");
             }
@@ -53,12 +53,25 @@ class Config implements ConfigBase
     private function env(string $fileName, string $key, $default = '')
     {
         $keyRes = explode('.', $key);
-        $currData = $default;
-        foreach ($keyRes as $v) {
-            $currData = self::$data[$fileName][$v] ?? null;
-            if (!is_array($currData)) {
+        $count = count($keyRes);
+        switch ($count) {
+            case 0:
+                $currData = self::$data[$fileName] ?? $default;
                 break;
-            }
+            case 1:
+                $currData = self::$data[$fileName][$keyRes[0]] ?? $default;
+                break;
+            case 2:
+                $currData = self::$data[$fileName][$keyRes[0]][$keyRes[1]] ?? $default;
+                break;
+            case 3:
+                $currData = self::$data[$fileName][$keyRes[0]][$keyRes[1]][$keyRes[2]] ?? $default;
+                break;
+            case 4:
+                $currData = self::$data[$fileName][$keyRes[0]][$keyRes[1]][$keyRes[2]][$keyRes[3]] ?? $default;
+                break;
+            default;
+                $currData = $default;
         }
         return $currData;
     }

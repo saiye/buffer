@@ -7,6 +7,6 @@ return [
     'debug' => (bool) env('APP_DEBUG', false),
 
     'providers'=>[
-
+        \App\Providers\RouteProvider::class,
     ],
 ];

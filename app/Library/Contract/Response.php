@@ -11,4 +11,6 @@ interface Response
     public function write(string $content): void;
 
     public function end(): void;
+
+    public  function  getSocket();
 }

@@ -9,6 +9,8 @@ class SwooleResponse implements Base
 {
     private $response;
 
+
+
     public function __construct(Response $response)
     {
         $this->response = $response;
@@ -32,6 +34,11 @@ class SwooleResponse implements Base
     public function end(): void
     {
         $this->response->end();
+    }
+
+    public function getSocket()
+    {
+        return $this->response;
     }
 
     public function __get($name)
