@@ -9,9 +9,12 @@ use App\Library\Provider\InitServerProvider;
 class Application extends Container
 {
     const VERSION = '1.0.0';
+
     protected $path = [];
 
     private static $app;
+
+    private $runningInConsole = false;
 
     private function __construct()
     {
@@ -24,11 +27,21 @@ class Application extends Container
         $config = $this->make(Config::class);
 
         $providers = $config->get('app.providers');
-        if (is_array($providers)){
+        if (is_array($providers)) {
             foreach ($providers as $provider) {
                 (new $provider($this))->register();
             }
         }
+    }
+
+    public function setRunConsole()
+    {
+        $this->runningInConsole = true;
+    }
+
+    public function runningInConsole(): bool
+    {
+        return $this->runningInConsole;
     }
 
     public static function getApplication(): Application
@@ -36,6 +49,9 @@ class Application extends Container
         if (self::$app == null) {
             self::$app = new self();
         }
+        //绑定当前实例
+        self::$app->bind(\App\Library\Application::class, self::$app);
+
         return self::$app;
     }
 

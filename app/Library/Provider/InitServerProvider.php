@@ -5,6 +5,8 @@ namespace App\Library\Provider;
 use App\Library\Config\Config;
 use App\Library\Contract\ServiceProvider;
 use App\Library\Env;
+use App\Library\Contract\Logger;
+use App\Library\Log\Log;
 
 class InitServerProvider extends ServiceProvider
 {
@@ -17,6 +19,9 @@ class InitServerProvider extends ServiceProvider
         });
         $this->app->singleton(Config::class, function ($app) {
             return new  Config($app);
+        });
+        $this->app->singleton(Logger::class, function ($app) {
+            return new  Log($app);
         });
     }
 

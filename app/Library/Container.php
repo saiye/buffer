@@ -22,6 +22,10 @@ class Container
      */
     public function bind($abstract, $concrete = null, bool $shared = false): void
     {
+        if (is_a($concrete,$abstract)) {
+            $this->instances[$abstract] = $concrete;
+            return;
+        }
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
@@ -70,7 +74,7 @@ class Container
             $object = $this->make($concrete, $parameters);
         }
 
-        if ($this->bindings[$abstract]['shared']) {
+        if (isset($this->bindings[$abstract]['shared'])&&$this->bindings[$abstract]['shared']) {
             $this->instances[$abstract] = $object;
         }
 
@@ -132,14 +136,15 @@ class Container
         $dependencies = [];
 
         foreach ($parameters as $parameter) {
-            $dependency = $parameter->getClass();
-
+            $dependency = $parameter->getType();
             if (array_key_exists($parameter->name, $primitives)) {
                 $dependencies[] = $primitives[$parameter->name];
-            } elseif (!is_null($dependency)) {
-                $dependencies[] = $this->make($dependency->name);
-            } else {
-                $dependencies[] = $this->resolveNonClass($parameter);
+            } else{
+                if ($dependency->isBuiltin()){
+                    $dependencies[] = $this->resolveNonClass($parameter);
+                }else{
+                    $dependencies[] = $this->make($dependency->getName());
+                }
             }
         }
 
