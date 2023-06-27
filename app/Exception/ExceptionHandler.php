@@ -23,6 +23,7 @@ class ExceptionHandler implements ExceptionHandlerContract
          * @var $logger Logger
          */
         $logger = $this->app->make(Logger::class);
+
         $logger->error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
     }
 
@@ -33,13 +34,13 @@ class ExceptionHandler implements ExceptionHandlerContract
 
     public function render(Request $request, Throwable $e)
     {
-        echo 'http render:' . $e->getMessage() . PHP_EOL . $e->getTraceAsString();
+        echo 'ExceptionHandler http render:' . $e->getMessage() . PHP_EOL . $e->getTraceAsString();
     }
 
     public function renderForConsole(Throwable $e)
     {
         // TODO: Implement renderForConsole() method.
-        echo 'renderForConsole:' . $e->getMessage() . PHP_EOL . $e->getTraceAsString();
+        echo 'ExceptionHandlerConsole:' . $e->getMessage() . PHP_EOL . $e->getTraceAsString();
     }
 
 

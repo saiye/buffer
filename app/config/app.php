@@ -4,9 +4,11 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
-    'providers'=>[
-        \App\Providers\RouteProvider::class,
+    'providers' => [
+        \App\Library\Provider\SwooleServerProvider::class,
+        \App\Library\Provider\RouteServerProvider::class,
+        \App\Providers\AppProvider::class,
     ],
 ];

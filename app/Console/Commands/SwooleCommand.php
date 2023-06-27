@@ -32,6 +32,9 @@ class SwooleCommand extends BaseCommand
 
     public function start()
     {
+        /**
+         * @var $server HttpSwooleServer
+         */
         $server = $this->app->make(HttpSwooleServer::class);
         $server->start();
     }

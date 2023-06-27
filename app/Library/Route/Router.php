@@ -23,17 +23,18 @@ class Router
     {
         $method = $request->getMethod();
         $path = $request->getUri();
-        $handler = $this->routes[$method][$path] ?? null;
-        if ($handler) {
-            // 处理中间件
-            $response = (new Pipeline($this->app))
-                ->send($request)
-                ->through($this->middleware)
-                ->then($this->dispatchToRouter());
-        } else {
-            $response->setStatusCode(404);
-            $response->write('404 Not Found');
-        }
+//        $handler = $this->routes[$method][$path] ?? null;
+//        if ($handler) {
+//            // 处理中间件
+//            $response = (new Pipeline($this->app))
+//                ->send($request)
+//                ->through($this->middleware)
+//                ->then($this->dispatchToRouter());
+//        } else {
+//            $response->setStatusCode(404);
+//            $response->write('404 Not Found');
+//        }
+        $response->write($request->input());
         $response->end();
     }
 

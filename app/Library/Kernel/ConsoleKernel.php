@@ -8,10 +8,12 @@ use App\Library\Contract\Kernel;
 abstract class ConsoleKernel implements Kernel
 {
     protected $app;
+    protected $bootstrap=[];
 
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->bootstrap();
     }
 
     public function start()
@@ -45,5 +47,12 @@ abstract class ConsoleKernel implements Kernel
             }
         }
         return $options;
+    }
+
+    public function bootstrap()
+    {
+        foreach ($this->bootstrap as $class) {
+            (new $class())->bootstrap($this->app);
+        }
     }
 }

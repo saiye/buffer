@@ -8,7 +8,7 @@ use App\Library\Contract\Logger;
 use App\Library\Contract\Request;
 use ErrorException;
 
-class Error
+class AppError
 {
     protected $app;
 
@@ -44,7 +44,7 @@ class Error
     {
         $exception = new ErrorException($message, 0, $level, $file, $line);
         // 符合异常处理的则将错误信息托管至 ErrorException
-        if (error_reporting() & $errno) {
+        if (error_reporting() & $level) {
             throw $exception;
         }
         $this->getExceptionHandler()->report($exception);
@@ -59,12 +59,6 @@ class Error
                 $error['type'], $error['message'], $error['file'], $error['line']
             ));
         }
-        /**
-         * @var $logger Logger
-         */
-        $logger = $this->app->make(Logger::class);
-        //写入日志
-        $logger->write();
     }
 
     /**

@@ -55,7 +55,8 @@ class Log implements Logger
                     $info .= $date . '[' . $type . ']' . $log . PHP_EOL;
                 }
             }
-            file_put_contents($this->app->getPath('path.logs') . DIRECTORY_SEPARATOR . '.log', $info, FILE_APPEND);
+            $today=date('Ymd');
+            file_put_contents($this->app->getPath('path.logs') . DIRECTORY_SEPARATOR . $today.'.log', $info, FILE_APPEND);
             return true;
         }
         return false;

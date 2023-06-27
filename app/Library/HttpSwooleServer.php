@@ -2,6 +2,8 @@
 
 namespace App\Library;
 
+use App\Library\Bootstrap\ErrorBootstrap;
+use App\Library\Contract\ExceptionHandler;
 use App\Library\Contract\HttpServerContract;
 use App\Library\Contract\Request as ContractRequest;
 use App\Library\Contract\Response as ContractResponse;
@@ -9,6 +11,7 @@ use App\Library\Request\SwooleRequest;
 use App\Library\Response\SwooleResponse;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Throwable;
 
 class HttpSwooleServer implements HttpServerContract
 {
@@ -35,11 +38,15 @@ class HttpSwooleServer implements HttpServerContract
             $response->end();
             return;
         }
-        /**
-         * @var $router \App\Library\Route\Router
-         */
-        $router = $this->app->make('Router');
-        $router->handleRequest($request, $response);
+        $b = 0;
+        $a = 10 / $b;
+        $response->write('hello buffer' . $a);
+        $response->end();
+//        /**
+//         * @var $router \App\Library\Route\Router
+//         */
+//        $router = $this->app->make('Router');
+//        $router->handleRequest($request, $response);
     }
 
     public function onHandShake(ContractRequest $request, ContractResponse $response): bool
@@ -72,12 +79,20 @@ class HttpSwooleServer implements HttpServerContract
 
     public function start(): void
     {
+        echo "Swoole http server is started http://127.0.0.1:{$this->port}" . PHP_EOL;
+
         $server = new \Swoole\WebSocket\Server($this->host, $this->port, $this->mode, $this->sockType);
 
         $server->set($this->options);
 
         $server->on('request', function (Request $request, Response $response) {
-            $this->onRequest(new SwooleRequest($request), new SwooleResponse($response));
+            try {
+                $this->onRequest(new SwooleRequest($request), new SwooleResponse($response));
+            } catch (Throwable $exception) {
+                $this->errorHandlerReport($exception);
+              //  $response->write('error');
+                $response->end();
+            }
         });
 
         $server->on('handshake', function (Request $request, Response $response) {
@@ -89,5 +104,12 @@ class HttpSwooleServer implements HttpServerContract
         });
 
         $server->start();
+    }
+
+    private function errorHandlerReport(Throwable $exception): void
+    {
+        $this->app->make(ExceptionHandler::class)->report($exception);
+
+        throw $exception;
     }
 }

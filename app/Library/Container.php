@@ -22,14 +22,13 @@ class Container
      */
     public function bind($abstract, $concrete = null, bool $shared = false): void
     {
+        if (is_null($concrete)) {
+            $concrete = $abstract;
+        }
         if (is_a($concrete,$abstract)) {
             $this->instances[$abstract] = $concrete;
             return;
         }
-        if (is_null($concrete)) {
-            $concrete = $abstract;
-        }
-
         if (!$concrete instanceof Closure) {
             $concrete = function ($container) use ($concrete) {
                 /**

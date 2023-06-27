@@ -7,7 +7,7 @@ use App\Library\Contract\ServiceProvider;
 use App\Library\Application;
 use App\Library\HttpSwooleServer;
 
-class HttpServerProvider extends ServiceProvider
+class SwooleServerProvider extends ServiceProvider
 {
     public function register()
     {
