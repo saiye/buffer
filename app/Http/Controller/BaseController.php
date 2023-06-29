@@ -9,6 +9,7 @@ class BaseController
 {
     protected $app;
     protected $request;
+
     public function __construct(Application $app, Request $request)
     {
         $this->app = $app;

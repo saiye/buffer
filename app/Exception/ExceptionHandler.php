@@ -12,6 +12,16 @@ class ExceptionHandler implements ExceptionHandlerContract
 {
     private $app;
 
+    /**
+     * 不记录LOG 的异常
+     * @var string[]
+     */
+    protected $dontReport = [
+        AuthException::class,
+        NotFindException::class,
+        ValidationException::class
+    ];
+
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -29,6 +39,11 @@ class ExceptionHandler implements ExceptionHandlerContract
 
     public function shouldReport(Throwable $e): bool
     {
+        foreach ($this->dontReport as $type) {
+            if ($e instanceof $type) {
+                return false;
+            }
+        }
         return true;
     }
 

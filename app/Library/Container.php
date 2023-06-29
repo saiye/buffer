@@ -25,7 +25,7 @@ class Container
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
-        if (is_a($concrete,$abstract)) {
+        if (is_a($concrete, $abstract)) {
             $this->instances[$abstract] = $concrete;
             return;
         }
@@ -73,7 +73,7 @@ class Container
             $object = $this->make($concrete, $parameters);
         }
 
-        if (isset($this->bindings[$abstract]['shared'])&&$this->bindings[$abstract]['shared']) {
+        if (isset($this->bindings[$abstract]['shared']) && $this->bindings[$abstract]['shared']) {
             $this->instances[$abstract] = $object;
         }
 
@@ -138,10 +138,10 @@ class Container
             $dependency = $parameter->getType();
             if (array_key_exists($parameter->name, $primitives)) {
                 $dependencies[] = $primitives[$parameter->name];
-            } else{
-                if ($dependency->isBuiltin()){
+            } else {
+                if ($dependency->isBuiltin()) {
                     $dependencies[] = $this->resolveNonClass($parameter);
-                }else{
+                } else {
                     $dependencies[] = $this->make($dependency->getName());
                 }
             }

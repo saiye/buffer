@@ -7,6 +7,6 @@ use App\Library\Application;
 interface Bootstrap
 {
 
-    public function bootstrap(Application  $app);
+    public function bootstrap(Application $app);
 
 }

@@ -4,7 +4,6 @@ namespace App\Library\Exception;
 
 use App\Library\Application;
 use App\Library\Contract\ExceptionHandler;
-use App\Library\Contract\Logger;
 use App\Library\Contract\Request;
 use ErrorException;
 
@@ -25,7 +24,6 @@ class AppError
         register_shutdown_function([$this, 'appShutdown']);
     }
 
-
     public function appException($e)
     {
         $handler = $this->getExceptionHandler();
@@ -43,7 +41,7 @@ class AppError
     public function appError($level, $message, $file = '', $line = 0)
     {
         $exception = new ErrorException($message, 0, $level, $file, $line);
-        // 符合异常处理的则将错误信息托管至 ErrorException
+        // 符合异常处理的则将错误信息托管至 appException
         if (error_reporting() & $level) {
             throw $exception;
         }
@@ -53,7 +51,7 @@ class AppError
 
     public function appShutdown()
     {
-        // 将错误信息托管至 think\ErrorException
+        // 将错误信息托管至 appException
         if (!is_null($error = error_get_last()) && self::isFatal($error['type'])) {
             self::appException(new ErrorException(
                 $error['type'], $error['message'], $error['file'], $error['line']

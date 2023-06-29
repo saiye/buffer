@@ -1,10 +1,12 @@
 <?php
+
 use App\Library\Env;
+
 function env(string $key, string $default)
 {
     static $env;
-    if (!$env){
-        $env=new Env(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'.env');
+    if (!$env) {
+        $env = new Env(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . '.env');
     }
     return $env->env($key, $default);
 }

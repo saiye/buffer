@@ -4,5 +4,5 @@ namespace App\Library\Contract;
 
 interface Config
 {
-    public function get(string $command,$default=null);
+    public function get(string $command, $default = null);
 }

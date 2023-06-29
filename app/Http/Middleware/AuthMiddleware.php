@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exception\AuthException;
 use App\Library\Contract\Middleware;
 use App\Library\Contract\Request;
 use Closure;
@@ -15,7 +16,7 @@ class AuthMiddleware implements Middleware
         if ($this->checkToken($token)) {
             return $next($request);
         }
-        throw new \Exception("not login");
+        throw new AuthException("not login");
     }
 
     public function checkToken(string $token): bool

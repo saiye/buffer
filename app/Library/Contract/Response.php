@@ -4,13 +4,24 @@ namespace App\Library\Contract;
 
 interface Response
 {
-    public function setHeader(string $name, string $value): void;
+    public function setHeader(string $name, string $value): Response;
 
-    public function setStatusCode(int $statusCode): void;
+    public function fullHeaders(array $header): Response;
 
-    public function write(string $content): void;
+    public function getHeader(): array;
+
+    public function setStatusCode(int $statusCode): Response;
+
+    public function getStatusCode(): int;
+
+    public function setContent(string $content): Response;
+
+    public function getContent(): string;
 
     public function end(): void;
 
-    public  function  getSocket();
+    public function setSocket($socket): Response;
+
+    public function getSocket();
+
 }

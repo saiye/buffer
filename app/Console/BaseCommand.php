@@ -16,7 +16,7 @@ abstract class BaseCommand implements Command
         $this->option = $option;
     }
 
-    public function option(string $name='')
+    public function option(string $name = '')
     {
         if ($name == '') {
             return $this->option;

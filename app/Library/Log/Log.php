@@ -7,7 +7,6 @@ use App\Library\Contract\Logger;
 
 class Log implements Logger
 {
-    private $cache = [];
 
     private $app;
 
@@ -18,17 +17,17 @@ class Log implements Logger
 
     public function warning(string $data): void
     {
-        $this->cache('warning', $data);
+        $this->write('warning', $data);
     }
 
     public function error(string $data): void
     {
-        $this->cache('error', $data);
+        $this->write('error', $data);
     }
 
     public function info(string $data): void
     {
-        $this->cache('info', $data);
+        $this->write('info', $data);
     }
 
     /**
@@ -37,28 +36,11 @@ class Log implements Logger
      * @param string $data
      * @return void
      */
-    private function cache(string $type, string $data)
+    public function write(string $type, string $data): bool
     {
-        $this->cache[$type][] = $data;
-    }
-
-    public function write(): bool
-    {
-        //统一写入
-        if ($this->cache) {
-            $cache = $this->cache;
-            $this->cache = [];
-            $info = '';
-            $date = date('Ymd H:i:s');
-            foreach ($cache as $type => $list) {
-                foreach ($list as $log) {
-                    $info .= $date . '[' . $type . ']' . $log . PHP_EOL;
-                }
-            }
-            $today=date('Ymd');
-            file_put_contents($this->app->getPath('path.logs') . DIRECTORY_SEPARATOR . $today.'.log', $info, FILE_APPEND);
-            return true;
-        }
-        return false;
+        $today = date('Ymd');
+        $date = date('Y-m-d H:i:s');
+        file_put_contents($this->app->getPath('path.logs') . DIRECTORY_SEPARATOR . $today . '.log', '[' . $date . '] ' . $type . PHP_EOL . $data . PHP_EOL, FILE_APPEND);
+        return true;
     }
 }

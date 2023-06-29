@@ -2,9 +2,9 @@
 
 namespace App\Library\Provider;
 
+use App\Library\Application;
 use App\Library\Config\Config;
 use App\Library\Contract\ServiceProvider;
-use App\Library\Application;
 use App\Library\HttpSwooleServer;
 
 class SwooleServerProvider extends ServiceProvider
@@ -22,7 +22,7 @@ class SwooleServerProvider extends ServiceProvider
             $options = $config->config('server.swoole.options', [
                 'log_file' => "swoole.log",
             ]);
-            return new HttpSwooleServer($app,$host, $port, SWOOLE_PROCESS, SWOOLE_SOCK_TCP, $options);
+            return new HttpSwooleServer($app, $host, $port, SWOOLE_PROCESS, SWOOLE_SOCK_TCP, $options);
         });
     }
 }

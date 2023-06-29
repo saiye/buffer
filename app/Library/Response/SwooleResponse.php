@@ -2,52 +2,29 @@
 
 namespace App\Library\Response;
 
-use App\Library\Contract\Response as Base;
-use Swoole\Http\Response;
+use App\Library\Contract\Response as BaseResponse;
 
-class SwooleResponse implements Base
+class SwooleResponse implements BaseResponse
 {
-    private $response;
-
-
-
-    public function __construct(Response $response)
-    {
-        $this->response = $response;
-    }
-
-    public function setHeader(string $name, string $value): void
-    {
-        $this->response->header($name, $value);
-    }
-
-    public function setStatusCode(int $statusCode): void
-    {
-        $this->response->status($statusCode);
-    }
-
-    public function write(string $content): void
-    {
-        $this->response->write($content);
-    }
+    use ResponseTrait;
 
     public function end(): void
     {
-        $this->response->end();
-    }
-
-    public function getSocket()
-    {
-        return $this->response;
+        foreach ($this->header as $k => $v) {
+            $this->socket->header($k, $v);
+        }
+        $this->socket->status($this->statusCode);
+        $this->socket->write($this->content);
+        $this->socket->end();
     }
 
     public function __get($name)
     {
-        return $this->response->$name;
+        return $this->socket->$name;
     }
 
     public function __call($name, $arguments)
     {
-        return $this->response->$name(...$arguments);
+        return $this->socket->$name(...$arguments);
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Library\Contract;
-use  Throwable;
+
+use Throwable;
+
 interface ExceptionHandler
 {
     /**

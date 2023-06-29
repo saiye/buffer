@@ -8,22 +8,25 @@ use App\Library\Contract\Kernel;
 abstract class ConsoleKernel implements Kernel
 {
     protected $app;
-    protected $bootstrap=[];
+    protected $bootstrap = [];
 
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->bootstrap();
+        $this->app->setRunConsole();
+
     }
 
     public function start()
     {
-        $this->app->setRunConsole();
-
         global $argv;
         $count = count($argv);
-        if ($count > 1 && $argv[0] == 'artisan') {
+        if ($count > 1 && $argv[0] == 'buffer') {
             $command = ucfirst($argv[1]);
+            if ($command !== 'Swoole') {
+                //SWOOLE should boot the program in the WORKER process
+                $this->bootstrap();
+            }
             $option = $this->formatOption($argv);
             $commandClass = $this->app->make('App\\Console\\Commands\\' . $command . 'Command', [
                 'option' => $option,

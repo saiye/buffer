@@ -2,13 +2,13 @@
 
 namespace App\Library;
 
-use App\Library\Bootstrap\ErrorBootstrap;
 use App\Library\Contract\ExceptionHandler;
 use App\Library\Contract\HttpServerContract;
 use App\Library\Contract\Request as ContractRequest;
 use App\Library\Contract\Response as ContractResponse;
 use App\Library\Request\SwooleRequest;
 use App\Library\Response\SwooleResponse;
+use App\Library\Route\Router;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Throwable;
@@ -22,6 +22,11 @@ class HttpSwooleServer implements HttpServerContract
     private $sockType;
     private $options;
 
+    /**
+     * @var $router Router
+     */
+    private $router;
+
     public function __construct(Application $app, string $host = '127.0.0.1', int $port = 9505, int $mode = SWOOLE_PROCESS, int $sockType = SWOOLE_SOCK_TCP, array $options = [])
     {
         $this->app = $app;
@@ -30,23 +35,22 @@ class HttpSwooleServer implements HttpServerContract
         $this->mode = $mode;
         $this->sockType = $sockType;
         $this->options = $options;
+        $this->router = $this->app->make(Router::class);
     }
 
-    public function onRequest(ContractRequest $request, ContractResponse $response): void
+    public function onRequest(ContractRequest $request, ContractResponse $swooleResponse): void
     {
-        if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
-            $response->end();
-            return;
+        try {
+            if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
+                $swooleResponse->end();
+                return;
+            }
+            $response = $this->router->handleRequest($request);
+            $swooleResponse->setStatusCode($response->getStatusCode())->setContent($response->getContent())->end();
+        } catch (Throwable $exception) {
+            $swooleResponse->setStatusCode(500)->setContent($exception->getMessage())->end();
+            $this->errorHandlerReport($exception);
         }
-        $b = 0;
-        $a = 10 / $b;
-        $response->write('hello buffer' . $a);
-        $response->end();
-//        /**
-//         * @var $router \App\Library\Route\Router
-//         */
-//        $router = $this->app->make('Router');
-//        $router->handleRequest($request, $response);
     }
 
     public function onHandShake(ContractRequest $request, ContractResponse $response): bool
@@ -73,7 +77,6 @@ class HttpSwooleServer implements HttpServerContract
         $response->setStatusCode(101);
         // 结束HTTP响应
         $response->end();
-
         return true;
     }
 
@@ -86,20 +89,15 @@ class HttpSwooleServer implements HttpServerContract
         $server->set($this->options);
 
         $server->on('request', function (Request $request, Response $response) {
-            try {
-                $this->onRequest(new SwooleRequest($request), new SwooleResponse($response));
-            } catch (Throwable $exception) {
-                $this->errorHandlerReport($exception);
-              //  $response->write('error');
-                $response->end();
-            }
+            $this->onRequest(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
         });
 
         $server->on('handshake', function (Request $request, Response $response) {
-            $this->onHandShake(new SwooleRequest($request), new SwooleResponse($response));
+            $this->onHandShake(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
         });
 
         $server->on('Message', function ($ws, $frame) {
+            //收到
             $ws->push($frame->fd, "server: {$frame->data}");
         });
 
@@ -108,8 +106,13 @@ class HttpSwooleServer implements HttpServerContract
 
     private function errorHandlerReport(Throwable $exception): void
     {
-        $this->app->make(ExceptionHandler::class)->report($exception);
-
-        throw $exception;
+        /**
+         * @var $handel  ExceptionHandler
+         */
+        $handel = $this->app->make(ExceptionHandler::class);
+        if ($handel->shouldReport($exception)) {
+            $handel->report($exception);
+        }
+        $handel->renderForConsole($exception);
     }
 }

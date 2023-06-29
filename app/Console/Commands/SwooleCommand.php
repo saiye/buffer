@@ -10,8 +10,8 @@ class SwooleCommand extends BaseCommand
 {
     public function description(): string
     {
-        //start|php artisan swoole -action start
-        //stop|php artisan swoole -action stop
+        //start|php console swoole -action start
+        //stop|php console swoole -action stop
         return ' swoole service';
     }
 
@@ -26,7 +26,7 @@ class SwooleCommand extends BaseCommand
                 $this->stop();
                 break;
             default:
-                throw new \Exception("not find action:".$action);
+                throw new \Exception("not find action:" . $action);
         }
     }
 

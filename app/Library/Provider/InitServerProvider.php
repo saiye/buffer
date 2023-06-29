@@ -5,11 +5,12 @@ namespace App\Library\Provider;
 use App\Exception\ExceptionHandler as AppExceptionHandler;
 use App\Library\Config\Config;
 use App\Library\Contract\ExceptionHandler;
+use App\Library\Contract\Logger;
+use App\Library\Contract\Response;
 use App\Library\Contract\ServiceProvider;
 use App\Library\Env;
-use App\Library\Contract\Logger;
-use App\Library\Log\Log;
 use App\Library\Exception\AppError;
+use App\Library\Log\Log;
 
 class InitServerProvider extends ServiceProvider
 {
@@ -26,9 +27,11 @@ class InitServerProvider extends ServiceProvider
         $this->app->singleton(Logger::class, function ($app) {
             return new  Log($app);
         });
-        $this->app->singleton(ExceptionHandler::class,AppExceptionHandler::class);
+        $this->app->singleton(ExceptionHandler::class, AppExceptionHandler::class);
 
         $this->app->singleton(AppError::class);
+
+        $this->app->bind(Response::class, \App\Library\Response\Response::class);
     }
 
     public function pathRegister()

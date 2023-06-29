@@ -45,8 +45,7 @@ class Application extends Container
             self::$app = new self();
         }
         //绑定当前实例
-        self::$app->bind(\App\Library\Application::class, self::$app);
-
+        self::$app->bind(Application::class, self::$app);
         return self::$app;
     }
 
