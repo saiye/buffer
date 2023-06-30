@@ -7,8 +7,8 @@ return [
     'debug' => (bool)env('APP_DEBUG', false),
 
     'providers' => [
-        \App\Library\Provider\SwooleServerProvider::class,
-        \App\Library\Provider\RouteServerProvider::class,
+        \App\Providers\RouteServiceProvider::class,
         \App\Providers\AppProvider::class,
+        \App\Library\Provider\SwooleServerProvider::class,
     ],
 ];

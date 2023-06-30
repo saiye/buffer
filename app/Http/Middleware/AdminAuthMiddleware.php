@@ -7,23 +7,22 @@ use App\Library\Contract\Middleware;
 use App\Library\Contract\Request;
 use Closure;
 
-class AuthMiddleware implements Middleware
+class AdminAuthMiddleware implements Middleware
 {
     public function handle(Request $request, Closure $next, ...$guards)
     {
-        $header = $request->getHeaders();
-        $token = $header['token'] ?? '';
-        if ($this->checkToken($token)) {
+        $token = $request->input('token');
+        if ($token && $this->checkToken($token)) {
             return $next($request);
         }
-        throw new AuthException("not login");
+        throw new AuthException("admin not login");
     }
 
     public function checkToken(string $token): bool
     {
         //todo
 
-        return $token == 'buffer';
+        return $token == 'admin';
     }
 
 }

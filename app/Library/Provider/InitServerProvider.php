@@ -6,6 +6,7 @@ use App\Exception\ExceptionHandler as AppExceptionHandler;
 use App\Library\Config\Config;
 use App\Library\Contract\ExceptionHandler;
 use App\Library\Contract\Logger;
+use App\Library\Contract\Request;
 use App\Library\Contract\Response;
 use App\Library\Contract\ServiceProvider;
 use App\Library\Env;
@@ -14,6 +15,11 @@ use App\Library\Log\Log;
 
 class InitServerProvider extends ServiceProvider
 {
+    public function boot()
+    {
+        // TODO: Implement boot() method.
+    }
+
     public function register()
     {
         $this->pathRegister();
@@ -32,11 +38,17 @@ class InitServerProvider extends ServiceProvider
         $this->app->singleton(AppError::class);
 
         $this->app->bind(Response::class, \App\Library\Response\Response::class);
+
+        $this->app->bind(Request::class, \App\Library\Request\Request::class);
     }
 
     public function pathRegister()
     {
+        $this->app->setPath('path', APP_BASE);
+
         $this->app->setPath('path.app', APP_BASE . DIRECTORY_SEPARATOR . 'app');
+
+        $this->app->setPath('path.routes', APP_BASE . DIRECTORY_SEPARATOR . 'routes');
 
         $this->app->setPath('path.storage', APP_BASE . DIRECTORY_SEPARATOR . 'storage');
 

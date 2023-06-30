@@ -110,9 +110,7 @@ class HttpSwooleServer implements HttpServerContract
          * @var $handel  ExceptionHandler
          */
         $handel = $this->app->make(ExceptionHandler::class);
-        if ($handel->shouldReport($exception)) {
-            $handel->report($exception);
-        }
+        $handel->report($exception);
         $handel->renderForConsole($exception);
     }
 }

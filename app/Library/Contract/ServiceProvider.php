@@ -12,10 +12,18 @@ abstract class  ServiceProvider
      */
     protected $app;
 
+
+
     public function __construct(Application $app)
     {
         $this->app = $app;
     }
+
+    /**
+     *  boot
+     * @return mixed
+     */
+    abstract public function boot();
 
     /**
      * Register any application services.
@@ -23,5 +31,7 @@ abstract class  ServiceProvider
      * @return void
      */
     abstract public function register();
+
+
 
 }

@@ -16,7 +16,7 @@ class Response implements BaseResponse
         if (!key_exists('Content-Length', $this->header)) {
             header('Content-Length: ' . strlen($this->content));
         }
-        print($this->content);
+        echo $this->content;
     }
 
 

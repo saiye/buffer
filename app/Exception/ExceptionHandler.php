@@ -29,12 +29,14 @@ class ExceptionHandler implements ExceptionHandlerContract
 
     public function report(Throwable $e)
     {
-        /**
-         * @var $logger Logger
-         */
-        $logger = $this->app->make(Logger::class);
+        if ($this->shouldReport($e)) {
+            /**
+             * @var $logger Logger
+             */
+            $logger = $this->app->make(Logger::class);
 
-        $logger->error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+            $logger->error($e->getMessage() . PHP_EOL . $e->getTraceAsString());
+        }
     }
 
     public function shouldReport(Throwable $e): bool

@@ -23,20 +23,9 @@ class SwooleRequest implements base
     {
         return $this->request->server['request_uri'] ?? '/';
     }
-
-    public function getSocket()
-    {
-        return $this->request;
-    }
-
     public function getMethod(): string
     {
         return $this->request->server['request_method'];
-    }
-
-    public function getUri(): string
-    {
-        return $this->request->server['request_uri'];
     }
 
     public function getHeaders(): array

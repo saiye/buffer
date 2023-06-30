@@ -4,9 +4,8 @@ namespace App\Library\Exception;
 
 use App\Library\Application;
 use App\Library\Contract\ExceptionHandler;
-use App\Library\Contract\Request;
 use ErrorException;
-
+use App\Library\Contract\Request;
 class AppError
 {
     protected $app;

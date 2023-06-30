@@ -26,6 +26,9 @@ class Application extends Container
             foreach ($providers as $provider) {
                 (new $provider($this))->register();
             }
+            foreach ($providers as $provider) {
+                (new $provider($this))->boot();
+            }
         }
     }
 

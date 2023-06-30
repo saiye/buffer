@@ -2,17 +2,26 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\AdminAuthMiddleware;
+use App\Http\Middleware\UserAuthMiddleware;
 use App\Library\Bootstrap\ErrorBootstrap;
 use App\Library\Kernel\HttpKernel;
-
+use App\Library\Request\Request;
 class Kernel extends HttpKernel
 {
     protected $bootstrap = [
         ErrorBootstrap::class
     ];
     protected $middleware = [
-        AuthMiddleware::class
+
+    ];
+
+    protected $middlewareGroups = [
+
+    ];
+    protected $middlewareAliases = [
+        'UserAuth' => UserAuthMiddleware::class,
+        'AdminAuth' => AdminAuthMiddleware::class,
     ];
 
     public function bootstrap()
@@ -22,12 +31,12 @@ class Kernel extends HttpKernel
         }
     }
 
-
     public function start()
     {
-        $this->bootstrap();
-
-        echo 'http';
+        $response = $this->handleRequest(new Request());
+        $response->end();
     }
+
+
 
 }

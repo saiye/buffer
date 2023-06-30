@@ -2,45 +2,65 @@
 
 namespace App\Library\Route;
 
+use App\Exception\NotFindException;
 use App\Library\Application;
-use App\Library\Contract\Request;
 use App\Library\Contract\Response;
-use App\Library\Pipeline\Pipeline;
+use App\Library\Request\Request;
 
 class Router
 {
-    private $router;
+    protected $group;
 
     protected $app;
-    protected $middleware = [
-        \App\Http\Middleware\AuthMiddleware::class
-    ];
 
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $group)
     {
         $this->app = $app;
+        foreach ($group as $prefix => $path) {
+            $this->group[$prefix] = require_once $path;
+        }
     }
 
-    public function handleRequest(Request $request): Response
+    public function dispatch(Request $request): response
     {
-        // 处理中间件
-        return (new Pipeline($this->app))
-            ->send($request)
-            ->through($this->middleware)
-            ->then($this->dispatchToRouter());
+        $method = $request->getMethod();
+        $uri = $request->uri();
+        $prefix = $this->getUriPrefix($uri);
+        if (!empty($prefix)) {
+            $prefix = array_key_first($this->group);
+        }
+        if ($prefix) {
+            /**
+             * @var  $route Route
+             */
+            $route = $this->group[$prefix] ?? null;
+            if ($route) {
+                $responseRes = $route->match($method, $uri);
+                if ($responseRes instanceof Response) {
+                    return $responseRes;
+                } elseif (is_array($responseRes)) {
+                    $responseRes = json_encode($responseRes);
+                } else {
+                    $responseRes = print_r($responseRes, true);
+                }
+                /**
+                 * @var $response Response
+                 */
+                $response = $this->app->make(Response::class);
+                $response->setContent($responseRes);
+                return $response;
+            }
+        }
+        throw new NotFindException('404 Not Found' . $uri);
     }
 
-    public function dispatchToRouter()
+    public function getUriPrefix($uri): string
     {
-        /**
-         * @var  $request Request
-         */
-        return function ($request) {
-            //分发路由
-            // return $this->router->dispatch($request);
-            $data = $request->input();
-            $res = is_array($data) ? json_encode($data) : $data;
-            return (new \App\Library\Response\Response())->setSocket($request)->setContent('get:' . $res);
-        };
+        if ($uri == '/') {
+            return '';
+        }
+        $info = explode('/', $uri);
+        return $info[1] ?? '';
     }
+
 }
