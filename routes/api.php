@@ -1,13 +1,14 @@
 <?php
 
-$route = new \App\Library\Route\Route();
+use App\Http\Controller\IndexController;
+use App\Library\Route\Route;
+
+global $app;
+
+$route=$app->make(Route::class);
 
 $route->get('/', function () {
     return  'api/';
 });
 
-$route->get('/home', function () {
-    return 'api/home';
-})->middleware('UserAuth');
-
-return $route;
+$route->get('/home',[IndexController::class,'index'])->middleware('UserAuth');

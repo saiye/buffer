@@ -1,19 +1,12 @@
 <?php
 
 namespace App\Library\Route;
+
 class Route
 {
     private $routes = [];
 
-    private $prefix = '';
-
-    public function prefix($prefix)
-    {
-        $this->prefix = $prefix;
-
-        return $this;
-    }
-
+    private $tmpKey='';
     public function get($path, $callback)
     {
         return $this->addRoute('GET', $path, $callback);
@@ -32,27 +25,31 @@ class Route
             'callback' => $callback,
             'middlewares' => []
         ];
-
-        $this->routes[] = $route;
-
+        $this->tmpKey = $this->getRouteKey($method, $path);
+        $this->routes[$this->tmpKey] = $route;
         return $this;
+    }
+
+    public function getRouteKey($method, $path): string
+    {
+        return $method . '_' . $path;
     }
 
     public function middleware($middleware)
     {
-        $routeCount = count($this->routes);
-        $this->routes[$routeCount - 1]['middlewares'][] = $middleware;
+        $this->routes[$this->tmpKey]['middlewares'][] = $middleware;
         return $this;
     }
 
     public function match($requestMethod, $uri)
     {
+        $k = $this->getRouteKey($requestMethod, $uri);
+        if (isset($this->routes[$k])) {
+            return $this->routes[$k];
+        }
         foreach ($this->routes as $route) {
             if ($route['method'] === $requestMethod && $this->isMatch($route['path'], $uri)) {
-                return [
-                    'callback' => $route['callback'],
-                    'middlewares' => $route['middlewares']
-                ];
+                return $route;
             }
         }
         return null;

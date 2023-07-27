@@ -60,23 +60,19 @@ class Container
         if (isset($this->instances[$abstract])) {
             return $this->instances[$abstract];
         }
-
         if (isset($this->bindings[$abstract])) {
             $concrete = $this->bindings[$abstract]['concrete'];
         } else {
             $concrete = $abstract;
         }
-
         if ($this->isBuildable($concrete)) {
             $object = $this->build($concrete, $parameters);
         } else {
             $object = $this->make($concrete, $parameters);
         }
-
         if (isset($this->bindings[$abstract]['shared']) && $this->bindings[$abstract]['shared']) {
             $this->instances[$abstract] = $object;
         }
-
         return $object;
     }
 
@@ -98,18 +94,13 @@ class Container
         if ($concrete instanceof Closure) {
             return $concrete($this, ...$parameters);
         }
-
         $reflector = new ReflectionClass($concrete);
-
         if (!$reflector->isInstantiable()) throw new Exception("Class $concrete is not instantiable");
-
         //获取构造函数
         $constructor = $reflector->getConstructor();
-
         if (is_null($constructor)) {
             return new $concrete;
         }
-
         //获取构造函数的参数依赖
         $dependencies = $constructor->getParameters();
         //参数依赖匹配
@@ -117,13 +108,30 @@ class Container
             $dependencies,
             $parameters
         );
-
         $instances = $this->getDependencies(
             $dependencies,
             $parameters
         );
-
         return $reflector->newInstanceArgs($instances);
+    }
+
+
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    public function callFunction(string $className, string $functionName)
+    {
+        $class = $this->make($className);
+        $reflector = new ReflectionClass($class);
+        $dependencies = $reflector->getMethod($functionName)->getParameters();
+        if (empty($dependencies)) {
+            return $class->$functionName();
+        }
+        $instances = $this->getDependencies(
+            $dependencies
+        );
+        return $class->$functionName(...$instances);
     }
 
     /**
@@ -146,7 +154,6 @@ class Container
                 }
             }
         }
-
         return $dependencies;
     }
 

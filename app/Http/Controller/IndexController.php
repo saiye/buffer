@@ -2,6 +2,8 @@
 
 namespace App\Http\Controller;
 
+use App\Service\Game\LoginService;
+
 class IndexController extends BaseController
 {
     public function test()
@@ -9,8 +11,8 @@ class IndexController extends BaseController
         return 'test';
     }
 
-    public function index()
+    public function index(LoginService $service)
     {
-        return 'index';
+        return $service->gameList();
     }
 }

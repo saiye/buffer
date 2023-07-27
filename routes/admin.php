@@ -1,14 +1,19 @@
 <?php
 
-$route = new \App\Library\Route\Route();
+/**
+ * @var $route App\Library\Route\Route
+ */
 
-//$route->get('/', function () {
-//    return 'admin-index';
-//});
+use App\Library\Route\Route;
 
-$route->get('/home', function () {
+global $app;
+
+$route=$app->make(Route::class);
+
+$route->get('/admin', function () {
+    return 'admin-index';
+});
+
+$route->get('/admin/home', function () {
     return  'admin/home';
 })->middleware('UserAuth');
-
-
-return $route;

@@ -68,7 +68,7 @@ class Request implements base
 
     public function uri(): string
     {
-        return $_SERVER['PATH_INFO'] ?? '/';
+        return $_SERVER['REQUEST_URI'] ?? '/';
     }
 
     public function isWebSocketUpgrade(): bool

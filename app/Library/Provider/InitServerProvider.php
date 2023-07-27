@@ -12,7 +12,6 @@ use App\Library\Contract\ServiceProvider;
 use App\Library\Env;
 use App\Library\Exception\AppError;
 use App\Library\Log\Log;
-
 class InitServerProvider extends ServiceProvider
 {
     public function boot()
