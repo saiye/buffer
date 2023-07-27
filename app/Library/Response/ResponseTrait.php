@@ -19,6 +19,7 @@ trait ResponseTrait
     public function setHeader(string $name, string $value): BaseResponse
     {
         $this->header[$name] = $value;
+        return $this;
     }
 
     public function getHeader(): array

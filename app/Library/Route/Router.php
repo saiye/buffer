@@ -37,15 +37,17 @@ class Router
             }
             if ($responseRes instanceof Response) {
                 return $responseRes;
-            } elseif (is_array($responseRes)) {
-                $responseRes = json_encode($responseRes);
-            } elseif (!is_string($responseRes)){
-                $responseRes = print_r($responseRes, true);
             }
             /**
              * @var $response Response
              */
             $response = $this->app->make(Response::class);
+            if (is_array($responseRes)) {
+                $responseRes = json_encode($responseRes);
+                $response->setHeader('content-type','application/json');
+            } elseif (!is_string($responseRes)){
+                $responseRes = print_r($responseRes, true);
+            }
             $response->setContent($responseRes);
             return $response;
         }
