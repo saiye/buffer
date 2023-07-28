@@ -26,7 +26,7 @@ class Config implements ConfigBase
         }
     }
 
-    public function config(string $command, $default)
+    public function config(string $command, $default=null)
     {
         return $this->get($command, $default);
     }

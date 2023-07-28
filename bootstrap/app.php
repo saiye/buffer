@@ -4,7 +4,7 @@ use App\Library\Application;
 
 define('APP_BASE', dirname(__DIR__));
 
-$app=Application::getApplication();
+$app=new Application();
 
 $app->singleton(App\Library\Kernel\HttpKernel::class,App\Http\Kernel::class);
 

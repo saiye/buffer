@@ -4,24 +4,27 @@ namespace App\Library\Database;
 
 class HasMany implements RelationInterface
 {
+    use RelationRrait;
     protected $relatedModel;
     protected $foreignKey;
+
+    protected $localKey;
     protected $foreignKeyValue;
 
-    public function __construct($relatedModel, $foreignKey)
+
+
+    public function __construct($relatedModel, $foreignKey, $localKey)
     {
-        $this->relatedModel = new $relatedModel(new MySQLConnection()); // 此处传入合适的数据库连接实例
+        $this->relatedModel = new $relatedModel();
         $this->foreignKey = $foreignKey;
+        $this->localKey = $localKey;
     }
 
     public function get()
     {
-        return $this->relatedModel->where($this->foreignKey, '=', $this->foreignKeyValue)->get();
+        return $this->relatedModel->where($this->foreignKey, 'in', $this->foreignKeyValue)->get();
     }
 
-    public function setForeignKeyValue($value)
-    {
-        $this->foreignKeyValue = $value;
-        return $this;
-    }
+
 }
+

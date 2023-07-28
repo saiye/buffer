@@ -1,10 +1,7 @@
 <?php
 
-namespace Library\Route;
-
-use App\Library\Route\RouteController;
-use PHPUnit\Framework\TestCase;
-
+namespace Tests\Unit\Library\Route;
+use Tests\Init\TestBase;
 class RouteControllerTest extends TestCase
 {
 

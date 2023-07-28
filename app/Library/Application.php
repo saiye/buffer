@@ -15,7 +15,7 @@ class Application extends Container
 
     private $runningInConsole = false;
 
-    private function __construct()
+    public function __construct()
     {
         //基础服务提供者注册
         (new InitServerProvider($this))->register();
@@ -30,6 +30,7 @@ class Application extends Container
                 (new $provider($this))->boot();
             }
         }
+        self::$app=$this;
     }
 
     public function setRunConsole()
@@ -44,11 +45,6 @@ class Application extends Container
 
     public static function getApplication(): Application
     {
-        if (self::$app == null) {
-            self::$app = new self();
-        }
-        //绑定当前实例
-        self::$app->bind(Application::class, self::$app);
         return self::$app;
     }
 

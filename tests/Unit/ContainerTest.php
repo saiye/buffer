@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Library\Config\Config;
 use App\Library\Env;
-use Tests\TestBase;
+use Tests\Init\TestBase;
 
 class ContainerTest extends TestBase
 {
@@ -14,9 +14,9 @@ class ContainerTest extends TestBase
     public function testEnv()
     {
         // 创建容器实例
-        $env = $this->app->make(Env::class);
+        $env = self::$app->make(Env::class);
 
-        $config = $this->app->make(Config::class);
+        $config = self::$app->make(Config::class);
 
         $providers = $config->get('app.providers');
 
@@ -26,7 +26,7 @@ class ContainerTest extends TestBase
     public function testEnvDefault()
     {
         // 创建容器实例
-        $env = $this->app->make(Env::class);
+        $env = self::$app->make(Env::class);
 
         $port = $env->env('SERVER_PORT_N', 9505);
 

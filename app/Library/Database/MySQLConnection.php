@@ -1,15 +1,24 @@
 <?php
 
 namespace App\Library\Database;
+
 use \PDO;
+
 class MySQLConnection implements DBConnectionInterface
 {
+    private $config = [];
+
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
     public function getConnection()
     {
         // 连接 MySQL 数据库的代码
-        $dsn = "mysql:host=localhost;dbname=mydb;charset=utf8mb4";
-        $user = "username";
-        $pass = "password";
-        return new PDO($dsn, $user, $pass);
+        $dsn = "mysql:host={$this->config['host']};dbname={$this->config['database']};charset={$this->config['charset']}";
+        $user = $this->config['username'];
+        $pass = $this->config['password'];
+        return new PDO($dsn, $user, $pass, $this->config['options']);
     }
 }

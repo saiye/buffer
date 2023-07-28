@@ -31,4 +31,5 @@ interface ModelInterface
     public function hasOne($related, $foreignKey = null, $localKey = null);
 
     public function hasMany($related, $foreignKey = null, $localKey = null);
+    public function with($with);
 }

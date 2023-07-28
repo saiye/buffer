@@ -2,7 +2,7 @@
 
 use App\Library\Env;
 
-function env(string $key, string $default)
+function env(string $key, string $default=null)
 {
     static $env;
     if (!$env) {
