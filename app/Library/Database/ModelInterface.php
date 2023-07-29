@@ -6,7 +6,7 @@ interface ModelInterface
 {
     public function table($table);
 
-    public function select($columns = ['*']);
+    public function select(...$columns);
 
     public function where($column, $operator, $value);
 

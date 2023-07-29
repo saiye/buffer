@@ -56,8 +56,9 @@ class Model implements ModelInterface
     {
         if (is_array($with)) {
             $this->with = array_merge($this->with, $with);
+        } else {
+            $this->with[] = $with;
         }
-        $this->with[] = $with;
         return $this;
     }
 
@@ -67,9 +68,13 @@ class Model implements ModelInterface
         return $this;
     }
 
-    public function select($columns = ['*'])
+    public function select(...$columns)
     {
-        $this->select = $columns;
+        if (empty($columns)) {
+            $this->select = ['*'];
+        } else {
+            $this->select = $columns;
+        }
         return $this;
     }
 
@@ -97,7 +102,9 @@ class Model implements ModelInterface
 
     public function get()
     {
-        $query = "SELECT " . implode(", ", $this->select) . " FROM " . $this->table;
+        $select = is_array($this->select) ? implode(", ", $this->select) : $this->select;
+
+        $query = "SELECT " . $select . " FROM " . $this->table;
 
         if (!empty($this->where)) {
             $query .= " WHERE " . $this->buildWhereClause();
@@ -110,21 +117,34 @@ class Model implements ModelInterface
         if (!is_null($this->limit)) {
             $query .= " LIMIT " . $this->limit;
         }
-
-       echo $query.PHP_EOL;
-
-        $stmt = $this->pdo->prepare($query);
-        $this->bindWhereValues($stmt);
-        $stmt->execute();
-        $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $this->bindWhereValues($stmt);
+            $stmt->execute();
+            $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $exception) {
+            $stmt->debugDumpParams();
+            throw $exception;
+        }
+        $keyBy = $this->getKeyName();
+        if (is_array($keyBy)) {
+            $list = $this->keyByArray($list, $keyBy[0], $keyBy[1]);
+        }
         //with execute
         $withRelatedList = [];
         if (count($this->with)) {
             $localKeyArr = [];
-            foreach ($this->with as $fun) {
-                $class = $this->$fun();
-                $withRelatedList[$fun] = [
-                    'name' => get_class($class),
+            foreach ($this->with as $k => $f) {
+                if ($f instanceof \Closure) {
+                    $class = $this->$k();
+                    $f($class);
+                    $name = $k;
+                } else {
+                    $name = $f;
+                    $class = $this->$f();
+                }
+                $withRelatedList[$name] = [
+                    'has_one' => $class instanceof HasOne,
                     'class' => $class,
                 ];
                 $localKey = $class->getLocalKey();
@@ -148,10 +168,10 @@ class Model implements ModelInterface
             foreach ($list as $k => $item) {
                 foreach ($withRelatedList as $fun => $call) {
                     $localKey = $call['class']->getLocalKey();
-                    if ($call['class']['name'] == 'HasOne') {
-                        $item[$fun] = isset($withRelatedRecord[$fun][$item[$localKey]]) ? array_pop($withRelatedRecord[$fun][$item[$localKey]]) : null;
+                    if ($call['has_one']) {
+                        $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? null;
                     } else {
-                        $item[$fun] = isset($withRelatedRecord[$fun][$item[$localKey]]) ?? [];
+                        $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? [];
                     }
                 }
                 $list[$k] = $item;
@@ -160,9 +180,9 @@ class Model implements ModelInterface
         return $list;
     }
 
-    public function keyBy($key)
+    public function keyBy($key, $hasMany = false)
     {
-        $this->keyBy = $key;
+        $this->keyBy = [$key, $hasMany];
         return $this;
     }
 
@@ -171,11 +191,15 @@ class Model implements ModelInterface
         return $this->keyBy;
     }
 
-    public function keyByArray(array $list, string $key): array
+    public function keyByArray(array $list, string $key, bool $hasMany): array
     {
         $data = [];
         foreach ($list as $item) {
-            $data[$item[$key]] = $item;
+            if ($hasMany) {
+                $data[$item[$key]][] = $item;
+            } else {
+                $data[$item[$key]] = $item;
+            }
         }
         return $data;
     }
@@ -220,7 +244,6 @@ class Model implements ModelInterface
         $this->bindValues($stmt, $data);
         $this->bindWhereValues($stmt);
         $stmt->execute();
-
         return $stmt->rowCount();
     }
 
@@ -233,7 +256,6 @@ class Model implements ModelInterface
         $stmt = $this->pdo->prepare($query);
         $this->bindWhereValues($stmt);
         $stmt->execute();
-
         return $stmt->rowCount();
     }
 
@@ -261,7 +283,15 @@ class Model implements ModelInterface
             if ($index > 0) {
                 $whereClause .= ' AND ';
             }
-            $whereClause .= "$column $operator :where$index";
+            if ($operator == 'in') {
+                // 为每个值创建一个占位符，例如：(:where0_0, :where0_1, ...)
+                $w = '(' . implode(',', array_map(function ($i) use ($index) {
+                        return ":where{$index}_$i";
+                    }, array_keys($value))) . ')';
+            } else {
+                $w = ":where$index";
+            }
+            $whereClause .= "$column $operator " . $w;
         }
         return $whereClause;
     }
@@ -270,16 +300,12 @@ class Model implements ModelInterface
     {
         foreach ($this->where as $index => $condition) {
             if (is_array($condition[2])) {
-                var_dump($condition[2]);
-                $w = array_map(function ($a) {
-                    return "'{$a}'";
-                }, $condition[2]);
-                $value = '(' . implode(',', $w) . ')';
-                echo $value;
+                foreach ($condition[2] as $k => $val) {
+                    $stmt->bindValue(":where{$index}_$k", $val);
+                }
             } else {
-                $value = $condition[2];
+                $stmt->bindValue(":where$index", $condition[2]);
             }
-            $stmt->bindValue(":where$index", $value);
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Library\Database;
 class HasOne implements RelationInterface
 {
     use RelationRrait;
+
     protected $relatedModel;
     protected $foreignKey;
     protected $localKey;
@@ -19,7 +20,8 @@ class HasOne implements RelationInterface
 
     public function get()
     {
-        return $this->relatedModel->where($this->foreignKey, 'in', $this->foreignKeyValue)->get();
+        return $this->relatedModel->where($this->foreignKey, 'in', $this->foreignKeyValue)->keyBy($this->foreignKey)->get();
     }
+
 
 }

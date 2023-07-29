@@ -22,7 +22,7 @@ class HasMany implements RelationInterface
 
     public function get()
     {
-        return $this->relatedModel->where($this->foreignKey, 'in', $this->foreignKeyValue)->get();
+        return $this->relatedModel->where($this->foreignKey, 'in',$this->foreignKeyValue)->keyBy($this->foreignKey,true)->get();
     }
 
 

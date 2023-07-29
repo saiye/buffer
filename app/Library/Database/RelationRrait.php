@@ -21,4 +21,11 @@ trait RelationRrait
         return $this->localKey;
     }
 
+    public function __call($name, $arguments)
+    {
+        $this->relatedModel->$name(...$arguments);
+        return $this;
+    }
+
+
 }

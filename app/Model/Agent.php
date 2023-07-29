@@ -12,6 +12,6 @@ class Agent extends Model
 
     public function player()
     {
-        return $this->hasMany(User::class, 'Agent', 'Agent');
+        return $this->hasMany(User::class, 'Agent', 'Account');
     }
 }
