@@ -144,7 +144,6 @@ class Model implements ModelInterface
                     $class = $this->$f();
                 }
                 $withRelatedList[$name] = [
-                    'has_one' => $class instanceof HasOne,
                     'class' => $class,
                 ];
                 $localKey = $class->getLocalKey();
@@ -168,11 +167,7 @@ class Model implements ModelInterface
             foreach ($list as $k => $item) {
                 foreach ($withRelatedList as $fun => $call) {
                     $localKey = $call['class']->getLocalKey();
-                    if ($call['has_one']) {
-                        $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? null;
-                    } else {
-                        $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? [];
-                    }
+                    $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? [];
                 }
                 $list[$k] = $item;
             }

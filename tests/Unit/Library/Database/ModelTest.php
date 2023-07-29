@@ -42,7 +42,7 @@ class ModelTest extends TestBase
 
     public function testUpdate(){
         $id=(new ActionLog())->where('id',1)->update([
-            'who'=>'test',
+            'who'=>'test1'.time(),
             'ip'=>'192.168.2.1',
         ]);
         $this->assertTrue($id > 0);
