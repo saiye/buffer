@@ -1,4 +1,9 @@
 <?php
+
+use App\Library\Provider\SwooleServerProvider;
+use App\Providers\AppProvider;
+use App\Providers\RouteServiceProvider;
+
 return [
     'name' => env('APP_NAME', 'buffer'),
 
@@ -7,8 +12,8 @@ return [
     'debug' => (bool)env('APP_DEBUG', false),
 
     'providers' => [
-        \App\Providers\RouteServiceProvider::class,
-        \App\Providers\AppProvider::class,
-        \App\Library\Provider\SwooleServerProvider::class,
+        RouteServiceProvider::class,
+        AppProvider::class,
+        SwooleServerProvider::class,
     ],
 ];

@@ -10,8 +10,6 @@ class SwooleCommand extends BaseCommand
 {
     public function description(): string
     {
-        //start|php console swoole -action start
-        //stop|php console swoole -action stop
         return ' swoole service';
     }
 

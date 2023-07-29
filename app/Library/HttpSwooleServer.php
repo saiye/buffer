@@ -6,6 +6,7 @@ use App\Library\Contract\ExceptionHandler;
 use App\Library\Contract\HttpServerContract;
 use App\Library\Contract\Request as ContractRequest;
 use App\Library\Contract\Response as ContractResponse;
+use App\Library\Pipeline\Pipeline;
 use App\Library\Request\SwooleRequest;
 use App\Library\Response\SwooleResponse;
 use App\Library\Route\Router;
@@ -21,6 +22,8 @@ class HttpSwooleServer implements HttpServerContract
     private $mode;
     private $sockType;
     private $options;
+
+    private $middleware=[];
 
     /**
      * @var $router Router
@@ -38,6 +41,22 @@ class HttpSwooleServer implements HttpServerContract
         $this->router = $this->app->make(Router::class);
     }
 
+    public function handleRequest(ContractRequest $request): ContractResponse
+    {
+        // 处理中间件
+        return (new Pipeline($this->app))
+            ->send($request)
+            ->through($this->middleware)
+            ->then($this->dispatchToRouter());
+    }
+
+    public function dispatchToRouter()
+    {
+        return function ($request) {
+            return $this->router->dispatch($request);
+        };
+    }
+
     public function onRequest(ContractRequest $request, ContractResponse $swooleResponse): void
     {
         try {
@@ -45,7 +64,7 @@ class HttpSwooleServer implements HttpServerContract
                 $swooleResponse->end();
                 return;
             }
-            $response = $this->router->handleRequest($request);
+            $response = $this->handleRequest($request);
             $swooleResponse->setStatusCode($response->getStatusCode())->setContent($response->getContent())->end();
         } catch (Throwable $exception) {
             $swooleResponse->setStatusCode(500)->setContent($exception->getMessage())->end();
