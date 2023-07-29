@@ -15,8 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
-        "monolog/monolog": "^2.5"
+        "php": ">=7.3"
     },
     "autoload-dev": {
         "psr-4": {
