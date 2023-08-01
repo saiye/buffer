@@ -2,5 +2,7 @@
 .settings
 .project
 .htaccess
+.env
+.phpunit.result.cache
 /vendor/
 /runtime/
