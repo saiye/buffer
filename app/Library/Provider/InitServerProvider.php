@@ -42,7 +42,7 @@ class InitServerProvider extends ServiceProvider
         $this->app->bind(Request::class, \App\Library\Request\Request::class);
 
         $this->app->singleton(ConnectionFactory::class, function($app){
-             return new ConnectionFactory();
+             return new ConnectionFactory($app);
         });
     }
 

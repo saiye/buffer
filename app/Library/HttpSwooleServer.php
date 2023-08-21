@@ -60,12 +60,8 @@ class HttpSwooleServer implements HttpServerContract
     public function onRequest(ContractRequest $request, ContractResponse $swooleResponse): void
     {
         try {
-            if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
-                $swooleResponse->end();
-                return;
-            }
             $response = $this->handleRequest($request);
-            $swooleResponse->setStatusCode($response->getStatusCode())->setContent($response->getContent())->end();
+            $swooleResponse->fullHeaders($response->getHeader())->setStatusCode($response->getStatusCode())->setContent($response->getContent())->end();
         } catch (Throwable $exception) {
             $swooleResponse->setStatusCode(500)->setContent('err:'.$exception->getMessage())->end();
             $this->errorHandlerReport($exception);
@@ -103,14 +99,14 @@ class HttpSwooleServer implements HttpServerContract
 
     public function start(): void
     {
-        echo "Swoole http server is started http://127.0.0.1:{$this->port}" . PHP_EOL;
+        echo "Swoole http server is started {$this->host}:{$this->port}" . PHP_EOL;
 
         $server = new \Swoole\WebSocket\Server($this->host, $this->port, $this->mode, $this->sockType);
 
         $server->set($this->options);
 
         $server->on('request', function (Request $request, Response $response) {
-            $this->onRequest(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
+           $this->onRequest(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
         });
 
         $server->on('handshake', function (Request $request, Response $response) {

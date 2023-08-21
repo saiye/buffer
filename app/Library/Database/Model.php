@@ -5,6 +5,7 @@ namespace App\Library\Database;
 
 use App\Library\Application;
 use PDO;
+
 class Model implements ModelInterface
 {
     protected $connection = 'mysql';
@@ -14,18 +15,15 @@ class Model implements ModelInterface
     protected $select = ['*'];
     protected $orderBy;
     protected $limit;
-
     protected $app;
     protected $with = [];
-
     protected $primaryKey = 'id';
-
     protected $keyBy;
 
     public function __construct()
     {
         $this->app = Application::getApplication();
-        $this->pdo = $this->app->make(ConnectionFactory::class)->getPdo($this->app, $this->connection);
+        $this->pdo = $this->app->make(ConnectionFactory::class)->getSingletonPdo($this->connection);
     }
 
     public function hasOne($related, $foreignKey = null, $localKey = null)
@@ -276,6 +274,7 @@ class Model implements ModelInterface
         }
         return $whereClause;
     }
+
     protected function bindWhereValues($stmt)
     {
         foreach ($this->where as $index => $condition) {
@@ -287,5 +286,10 @@ class Model implements ModelInterface
                 $stmt->bindValue(":where$index", $condition[2]);
             }
         }
+    }
+
+    public function __call($name, $arguments)
+    {
+        $this->pdo->$name($arguments);
     }
 }
