@@ -16,7 +16,7 @@ class TestBase extends BaseTestCase
             self::$app = $this->createApplication();
         }
     }
-    private function createApplication(): Application
+    private function createApplication()
     {
         return require_once __DIR__ . '/../../bootstrap/app.php';
     }

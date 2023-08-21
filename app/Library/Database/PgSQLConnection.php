@@ -17,6 +17,7 @@ class PgSQLConnection implements DBConnectionInterface
         $dsn = "pgsql:host={$this->config['host']};dbname={$this->config['database']}";
         $user = $this->config['username'];
         $pass = $this->config['password'];
-        return new PDO($dsn, $user, $pass, $this->config['options']);
+        $option=$this->config['options'];
+        return new PDO($dsn, $user, $pass,$option);
     }
 }

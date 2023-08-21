@@ -5,7 +5,7 @@ namespace App\Library\Route;
 use App\Exception\NotFindException;
 use App\Library\Application;
 use App\Library\Contract\Response;
-use App\Library\Request\Request;
+use  App\Library\Contract\Request;
 class Router
 {
     /**
@@ -36,7 +36,7 @@ class Router
                 $responseRes = $this->app->callFunction($routeMap['callback'][0], $routeMap['callback'][1]);
             }
             if ($responseRes instanceof Response) {
-                return $responseRes;
+                return $responseRes->setStatusCode(200);
             }
             /**
              * @var $response Response
@@ -44,11 +44,11 @@ class Router
             $response = $this->app->make(Response::class);
             if (is_array($responseRes)) {
                 $responseRes = json_encode($responseRes);
-                $response->setHeader('content-type','application/json');
+                $response->setHeader('content-type','application/json;charset=utf-8');
             } elseif (!is_string($responseRes)){
                 $responseRes = print_r($responseRes, true);
             }
-            $response->setContent($responseRes);
+            $response->setContent($responseRes)->setStatusCode(200);
             return $response;
         }
         throw new NotFindException('404 Not Found' . $uri);

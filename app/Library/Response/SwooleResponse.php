@@ -14,7 +14,9 @@ class SwooleResponse implements BaseResponse
             $this->socket->header($k, $v);
         }
         $this->socket->status($this->statusCode);
-        $this->socket->write($this->content);
+        if($this->content){
+            $this->socket->write($this->content);
+        }
         $this->socket->end();
     }
 

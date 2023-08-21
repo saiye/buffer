@@ -67,7 +67,7 @@ class HttpSwooleServer implements HttpServerContract
             $response = $this->handleRequest($request);
             $swooleResponse->setStatusCode($response->getStatusCode())->setContent($response->getContent())->end();
         } catch (Throwable $exception) {
-            $swooleResponse->setStatusCode(500)->setContent($exception->getMessage())->end();
+            $swooleResponse->setStatusCode(500)->setContent('err:'.$exception->getMessage())->end();
             $this->errorHandlerReport($exception);
         }
     }
@@ -81,14 +81,16 @@ class HttpSwooleServer implements HttpServerContract
          * 表示握手成功。然后，你需要调用 `$response->header()` 方法来设置一些HTTP头信息，
          * 例如 `Upgrade` 和 `Connection`。最后，你需要调用 `$response->end()` 方法来结束HTTP响应。
          */
-        $secWebSocketKey = $request->header['Sec-WebSocket-Key'] ?? '';
+        $secWebSocketKey = $request->header['sec-websocket-key'] ?? '';
         $patten = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
         // 检查握手请求是否合法
         if ($secWebSocketKey == '' || 0 === preg_match($patten, $secWebSocketKey) || 16 !== strlen(base64_decode($secWebSocketKey))) {
+            echo "sss1111";
             $response->setStatusCode(400);
             $response->end();
             return false;
         }
+        echo "sss2222";
         // 设置WebSocket连接参数
         $response->setHeader('Sec-WebSocket-Accept', base64_encode(sha1($secWebSocketKey . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true)));
         $response->setHeader('Upgrade', 'websocket');
@@ -114,12 +116,10 @@ class HttpSwooleServer implements HttpServerContract
         $server->on('handshake', function (Request $request, Response $response) {
             $this->onHandShake(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
         });
-
         $server->on('Message', function ($ws, $frame) {
             //收到
             $ws->push($frame->fd, "server: {$frame->data}");
         });
-
         $server->start();
     }
 

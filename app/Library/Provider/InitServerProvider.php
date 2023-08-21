@@ -9,6 +9,7 @@ use App\Library\Contract\Logger;
 use App\Library\Contract\Request;
 use App\Library\Contract\Response;
 use App\Library\Contract\ServiceProvider;
+use App\Library\Database\ConnectionFactory;
 use App\Library\Env;
 use App\Library\Exception\AppError;
 use App\Library\Log\Log;
@@ -39,6 +40,10 @@ class InitServerProvider extends ServiceProvider
         $this->app->bind(Response::class, \App\Library\Response\Response::class);
 
         $this->app->bind(Request::class, \App\Library\Request\Request::class);
+
+        $this->app->singleton(ConnectionFactory::class, function($app){
+             return new ConnectionFactory();
+        });
     }
 
     public function pathRegister()

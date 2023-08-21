@@ -7,9 +7,9 @@
     }
   ],
   "require": {
-    "php": "^8.0.0",
+    "php": "^7.3.0",
     "guzzlehttp/guzzle": "^7.0.1",
-    "php-amqplib/php-amqplib": "2.5.*",
+    "php-amqplib/php-amqplib": "3.5.*",
     "ext-json": "*"
   },
   "require-dev": {
@@ -21,8 +21,11 @@
     }
   },
   "autoload": {
+    "files": [
+      "app/Library/helper.php"
+    ],
     "psr-4": {
-      "Engine\\": "framework/src/engine/"
+      "App\\": "app/"
     }
   }
 }

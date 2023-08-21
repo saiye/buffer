@@ -4,9 +4,7 @@ namespace App\Library\Database;
 
 
 use App\Library\Application;
-use App\Library\Config\Config;
 use PDO;
-
 class Model implements ModelInterface
 {
     protected $connection = 'mysql';
@@ -27,19 +25,7 @@ class Model implements ModelInterface
     public function __construct()
     {
         $this->app = Application::getApplication();
-        $config = $this->app->make(Config::class);
-        $driver = $config->config("app.db.connections.{$this->connection}driver");
-        switch ($driver) {
-            case 'mysql':
-                $connection = new MySQLConnection($config->config('db.connections.' . $this->connection));
-                break;
-            case 'pgsql':
-                $connection = new PgSQLConnection($config->config('db.connections.' . $this->connection));
-                break;
-            default:
-                $connection = new MySQLConnection($config->config('db.connections.' . $this->connection));
-        }
-        $this->pdo = $connection->getConnection();
+        $this->pdo = $this->app->make(ConnectionFactory::class)->getPdo($this->app, $this->connection);
     }
 
     public function hasOne($related, $foreignKey = null, $localKey = null)
@@ -81,7 +67,7 @@ class Model implements ModelInterface
     public function where($column, $operator, $value = null)
     {
         if ($value == null) {
-            $value = $operator;
+            $value    = $operator;
             $operator = '=';
         }
         $this->where[] = [$column, $operator, $value];
@@ -90,7 +76,7 @@ class Model implements ModelInterface
 
     public function orderBy($column, $direction = 'ASC')
     {
-        $this->orderBy = $column . ' ' . $direction;
+        $this->orderBy = $column.' '.$direction;
         return $this;
     }
 
@@ -104,18 +90,18 @@ class Model implements ModelInterface
     {
         $select = is_array($this->select) ? implode(", ", $this->select) : $this->select;
 
-        $query = "SELECT " . $select . " FROM " . $this->table;
+        $query = "SELECT ".$select." FROM ".$this->table;
 
         if (!empty($this->where)) {
-            $query .= " WHERE " . $this->buildWhereClause();
+            $query .= " WHERE ".$this->buildWhereClause();
         }
 
         if (!is_null($this->orderBy)) {
-            $query .= " ORDER BY " . $this->orderBy;
+            $query .= " ORDER BY ".$this->orderBy;
         }
 
         if (!is_null($this->limit)) {
-            $query .= " LIMIT " . $this->limit;
+            $query .= " LIMIT ".$this->limit;
         }
         try {
             $stmt = $this->pdo->prepare($query);
@@ -123,7 +109,7 @@ class Model implements ModelInterface
             $stmt->execute();
             $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $exception) {
-            $stmt->debugDumpParams();
+            //  $stmt->debugDumpParams();
             throw $exception;
         }
         $keyBy = $this->getKeyName();
@@ -140,13 +126,13 @@ class Model implements ModelInterface
                     $f($class);
                     $name = $k;
                 } else {
-                    $name = $f;
+                    $name  = $f;
                     $class = $this->$f();
                 }
                 $withRelatedList[$name] = [
                     'class' => $class,
                 ];
-                $localKey = $class->getLocalKey();
+                $localKey               = $class->getLocalKey();
                 $localKeyArr[$localKey] = [];
             }
             //批量提取，依赖值
@@ -160,13 +146,13 @@ class Model implements ModelInterface
             //数据库批量查询
             $withRelatedRecord = [];
             foreach ($withRelatedList as $fun => $call) {
-                $key = $call['class']->getLocalKey();
+                $key                     = $call['class']->getLocalKey();
                 $withRelatedRecord[$fun] = $call['class']->setForeignKeyValue(array_unique($localKeyArr[$key]))->get();
             }
             //数据组装返回
             foreach ($list as $k => $item) {
                 foreach ($withRelatedList as $fun => $call) {
-                    $localKey = $call['class']->getLocalKey();
+                    $localKey   = $call['class']->getLocalKey();
                     $item[$fun] = $withRelatedRecord[$fun][$item[$localKey]] ?? [];
                 }
                 $list[$k] = $item;
@@ -222,8 +208,8 @@ class Model implements ModelInterface
     public function create(array $data)
     {
         $columns = array_keys($data);
-        $query = "INSERT INTO " . $this->table . " (" . implode(", ", $columns) . ") VALUES (:" . implode(", :", $columns) . ")";
-        $stmt = $this->pdo->prepare($query);
+        $query   = "INSERT INTO ".$this->table." (".implode(", ", $columns).") VALUES (:".implode(", :", $columns).")";
+        $stmt    = $this->pdo->prepare($query);
         $this->bindValues($stmt, $data);
         $stmt->execute();
         return $this->pdo->lastInsertId();
@@ -231,9 +217,9 @@ class Model implements ModelInterface
 
     public function update(array $data)
     {
-        $query = "UPDATE " . $this->table . " SET " . $this->buildUpdateClause($data);
+        $query = "UPDATE ".$this->table." SET ".$this->buildUpdateClause($data);
         if (!empty($this->where)) {
-            $query .= " WHERE " . $this->buildWhereClause();
+            $query .= " WHERE ".$this->buildWhereClause();
         }
         $stmt = $this->pdo->prepare($query);
         $this->bindValues($stmt, $data);
@@ -244,9 +230,9 @@ class Model implements ModelInterface
 
     public function delete()
     {
-        $query = "DELETE FROM " . $this->table;
+        $query = "DELETE FROM ".$this->table;
         if (!empty($this->where)) {
-            $query .= " WHERE " . $this->buildWhereClause();
+            $query .= " WHERE ".$this->buildWhereClause();
         }
         $stmt = $this->pdo->prepare($query);
         $this->bindWhereValues($stmt);
@@ -280,17 +266,16 @@ class Model implements ModelInterface
             }
             if ($operator == 'in') {
                 // 为每个值创建一个占位符，例如：(:where0_0, :where0_1, ...)
-                $w = '(' . implode(',', array_map(function ($i) use ($index) {
+                $w = '('.implode(',', array_map(function ($i) use ($index) {
                         return ":where{$index}_$i";
-                    }, array_keys($value))) . ')';
+                    }, array_keys($value))).')';
             } else {
                 $w = ":where$index";
             }
-            $whereClause .= "$column $operator " . $w;
+            $whereClause .= "$column $operator ".$w;
         }
         return $whereClause;
     }
-
     protected function bindWhereValues($stmt)
     {
         foreach ($this->where as $index => $condition) {
@@ -303,5 +288,4 @@ class Model implements ModelInterface
             }
         }
     }
-
 }

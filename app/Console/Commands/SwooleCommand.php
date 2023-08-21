@@ -15,7 +15,7 @@ class SwooleCommand extends BaseCommand
 
     public function run(): void
     {
-        $action = $this->option('action');
+       $action = $this->option('action');
         switch ($action) {
             case 'start':
                 $this->start();

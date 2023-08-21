@@ -14,13 +14,17 @@ class HasOne implements RelationInterface
     public function __construct($relatedModel, $foreignKey, $localKey)
     {
         $this->relatedModel = new $relatedModel();
-        $this->foreignKey = $foreignKey;
-        $this->localKey = $localKey;
+        $this->foreignKey   = $foreignKey;
+        $this->localKey     = $localKey;
     }
 
     public function get()
     {
-        return $this->relatedModel->where($this->foreignKey, 'in', $this->foreignKeyValue)->keyBy($this->foreignKey)->get();
+        if ($this->foreignKeyValue) {
+            return $this->relatedModel->where($this->foreignKey, 'in',
+                $this->foreignKeyValue)->keyBy($this->foreignKey)->get();
+        }
+        return [];
     }
 
 
