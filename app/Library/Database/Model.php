@@ -288,8 +288,8 @@ class Model implements ModelInterface
         }
     }
 
-    public function __call($name, $arguments)
+    public function __call($name, ...$arguments)
     {
-        $this->pdo->$name($arguments);
+        $this->pdo->$name(...$arguments);
     }
 }

@@ -112,11 +112,31 @@ class HttpSwooleServer implements HttpServerContract
         $server->on('handshake', function (Request $request, Response $response) {
             $this->onHandShake(new SwooleRequest($request), (new SwooleResponse())->setSocket($response));
         });
-        $server->on('Message', function ($ws, $frame) {
-            //收到
-            $ws->push($frame->fd, "server: {$frame->data}");
+
+        $server->on('Message', function ($server, $frame) {
+            $data = json_decode($frame->data, true);
+            //candidate,offer,answer
+            if (in_array($data['type'],['candidate','offer','answer'])) {
+                // 处理 Offer 或 Answer
+                // 将 SDP 信息广播给其他连接
+                $this->broadcastMessage($server, $frame->fd, $data);
+            }
+            if ($data['type']=='heartbeat'){
+                $data['time']=date("Ymd H:i:s");
+                $server->push($frame->fd, json_encode($data));
+            }
         });
         $server->start();
+    }
+
+    // 广播消息给所有连接
+    public   function broadcastMessage($server, $senderFd, $data)
+    {
+        foreach ($server->connections as $fd) {
+            if ($fd !== $senderFd && $server->exist($fd)) {
+                $server->push($fd, json_encode($data));
+            }
+        }
     }
 
     private function errorHandlerReport(Throwable $exception): void

@@ -10,6 +10,7 @@ use Tests\Init\TestBase;
 class ModelTest extends TestBase
 {
 
+    //test
     public function testHasOne()
     {
         $id = 1;
@@ -41,6 +42,15 @@ class ModelTest extends TestBase
     }
 
     public function testUpdate(){
+        $id=(new ActionLog())->where('id',1)->update([
+            'who'=>'test1'.time(),
+            'ip'=>'192.168.2.1',
+        ]);
+        $this->assertTrue($id > 0);
+    }
+
+
+   public function testUpdateTran(){
         $id=(new ActionLog())->where('id',1)->update([
             'who'=>'test1'.time(),
             'ip'=>'192.168.2.1',
