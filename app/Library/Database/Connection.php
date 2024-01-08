@@ -160,11 +160,13 @@ class Connection
      * @throws \Exception
      */
     public function throwErr($stmt):void{
+        $info= $stmt->errorInfo();
         $stmt->closeCursor();
-       $info= $stmt->errorInfo();
        if ($info){
-           $message=implode(',',$info);
-           throw  new \Exception($message);
+           if ($info[0]!=='00000'){
+               $message=implode(',',$info);
+               throw  new \Exception($message);
+           }
        }
     }
 
@@ -261,5 +263,4 @@ class Connection
     {
         return $this->getPdo()->rollBack();
     }
-
 }

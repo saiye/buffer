@@ -4,8 +4,10 @@ namespace App\Library\Route;
 
 use App\Exception\NotFindException;
 use App\Library\Application;
+use App\Library\Contract\Request;
 use App\Library\Contract\Response;
-use  App\Library\Contract\Request;
+use App\Library\Support\Collection;
+
 class Router
 {
     /**
@@ -42,10 +44,12 @@ class Router
              * @var $response Response
              */
             $response = $this->app->make(Response::class);
+            $response->setHeader('content-type', 'application/json;charset=utf-8');
             if (is_array($responseRes)) {
                 $responseRes = json_encode($responseRes);
-                $response->setHeader('content-type','application/json;charset=utf-8');
-            } elseif (!is_string($responseRes)){
+            } elseif ($responseRes instanceof Collection) {
+                $responseRes = json_encode($responseRes->toArray());
+            } elseif (!is_string($responseRes)) {
                 $responseRes = print_r($responseRes, true);
             }
             $response->setContent($responseRes)->setStatusCode(200);

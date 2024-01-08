@@ -6,10 +6,9 @@ declare(strict_types=1);
 namespace App\Library\Support;
 
 use ArrayAccess;
-use Exception;
+use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
-use ArrayIterator;
 
 class Collection implements ArrayAccess, IteratorAggregate
 {
@@ -27,7 +26,7 @@ class Collection implements ArrayAccess, IteratorAggregate
         } elseif ($items instanceof Traversable) {
             return iterator_to_array($items);
         }
-        return (array) $items;
+        return (array)$items;
     }
 
 
@@ -94,7 +93,7 @@ class Collection implements ArrayAccess, IteratorAggregate
             $resolvedKey = $keyBy($item, $key);
 
             if (is_object($resolvedKey)) {
-                $resolvedKey = (string) $resolvedKey;
+                $resolvedKey = (string)$resolvedKey;
             }
 
             $results[$resolvedKey] = $item;
@@ -103,8 +102,17 @@ class Collection implements ArrayAccess, IteratorAggregate
         return new static($results);
     }
 
+    public function toArray()
+    {
+        return $this->all();
+    }
+
     public function all()
     {
         return $this->items;
+    }
+    public function __get($name)
+    {
+      return $this->items[$name]??null;
     }
 }
