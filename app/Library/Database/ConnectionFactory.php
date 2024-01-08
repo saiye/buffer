@@ -7,6 +7,7 @@ namespace App\Library\Database;
 
 use App\Library\Config\Config;
 use App\Library\Container;
+use \PDO;
 
 class ConnectionFactory
 {
@@ -19,7 +20,7 @@ class ConnectionFactory
         $this->app = $app;
     }
 
-    public function getSingletonPdo(string $connection)
+    public function getSingletonPdo(string $connection):PDO
     {
         if (!isset($this->connection[$connection])) {
             $this->connection[$connection] = $this->getPdo($connection);
@@ -27,19 +28,19 @@ class ConnectionFactory
         return $this->connection[$connection];
     }
 
-    public function getPdo(string $connection)
+    public function getPdo(string $connection):PDO
     {
         $config = $this->app->make(Config::class);
-        $driver = $config->config("app.db.connections.{$connection}driver");
+        $driver = $config->config("database.connections.{$connection}.driver");
         switch ($driver) {
             case 'mysql':
-                $con = new MySQLConnection($config->config('db.connections.'.$connection));
+                $con = new MySQLConnection($config->config('database.connections.'.$connection));
                 break;
             case 'pgsql':
-                $con = new PgSQLConnection($config->config('db.connections.'.$connection));
+                $con = new PgSQLConnection($config->config('database.connections.'.$connection));
                 break;
             default:
-                $con = new MySQLConnection($config->config('db.connections.'.$connection));
+                $con = new MySQLConnection($config->config('database.connections.'.$connection));
         }
         $this->connection[$connection] = $con->getConnection();
         return $this->connection[$connection];

@@ -26,10 +26,33 @@ interface ModelInterface
 
     public function update(array $data);
 
-    public function delete();
+    public function delete():int;
 
     public function hasOne($related, $foreignKey = null, $localKey = null);
 
     public function hasMany($related, $foreignKey = null, $localKey = null);
+
     public function with($with);
+
+    public function beginTransaction():bool;
+
+    public function commit():bool;
+
+    public function rollBack():bool;
+
+    public function getTableName():string;
+
+    public function getConnection():string;
+
+    public function getPrimaryKey():string;
+
+    public function getColumns();
+
+    public function getWhere():array;
+
+    public function getOrder():array;
+
+    public function getLimit():int;
+
+    public function getWith():array;
 }

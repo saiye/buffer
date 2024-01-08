@@ -11,7 +11,7 @@ class PgSQLConnection implements DBConnectionInterface
         $this->config = $config;
     }
 
-    public function getConnection()
+    public function getConnection():PDO
     {
         // 连接 PostgreSQL 数据库的代码
         $dsn = "pgsql:host={$this->config['host']};dbname={$this->config['database']}";

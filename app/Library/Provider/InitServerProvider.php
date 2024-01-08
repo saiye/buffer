@@ -58,7 +58,7 @@ class InitServerProvider extends ServiceProvider
 
         $this->app->setPath('path.logs', $this->app->getPath('path.storage') . DIRECTORY_SEPARATOR . 'logs');
 
-        $this->app->setPath('path.config', $this->app->getPath('path.app') . DIRECTORY_SEPARATOR . 'config');
+        $this->app->setPath('path.config',  APP_BASE.DIRECTORY_SEPARATOR . 'config');
 
         $this->app->setPath('path.config.optimize', $this->app->getPath('path.storage') . DIRECTORY_SEPARATOR . 'config.optimize.php');
     }

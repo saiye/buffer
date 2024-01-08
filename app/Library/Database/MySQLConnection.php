@@ -2,7 +2,7 @@
 
 namespace App\Library\Database;
 
-use \PDO;
+use PDO;
 
 class MySQLConnection implements DBConnectionInterface
 {
@@ -13,7 +13,7 @@ class MySQLConnection implements DBConnectionInterface
         $this->config = $config;
     }
 
-    public function getConnection()
+    public function getConnection():PDO
     {
         // 连接 MySQL 数据库的代码
         $dsn = "mysql:host={$this->config['host']};dbname={$this->config['database']};charset={$this->config['charset']}";
@@ -22,4 +22,5 @@ class MySQLConnection implements DBConnectionInterface
         $option=$this->config['options'];
         return new PDO($dsn, $user, $pass,$option);
     }
+
 }

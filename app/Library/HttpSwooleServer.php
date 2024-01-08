@@ -81,12 +81,10 @@ class HttpSwooleServer implements HttpServerContract
         $patten = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
         // 检查握手请求是否合法
         if ($secWebSocketKey == '' || 0 === preg_match($patten, $secWebSocketKey) || 16 !== strlen(base64_decode($secWebSocketKey))) {
-            echo "sss1111";
             $response->setStatusCode(400);
             $response->end();
             return false;
         }
-        echo "sss2222";
         // 设置WebSocket连接参数
         $response->setHeader('Sec-WebSocket-Accept', base64_encode(sha1($secWebSocketKey . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true)));
         $response->setHeader('Upgrade', 'websocket');
